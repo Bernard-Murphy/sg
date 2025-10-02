@@ -1,0 +1,91 @@
+service: sg-lambda-functions
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  endpointType: EDGE
+  timeout: 10
+  region: us-east-1
+  iam:
+    role: arn:aws:iam::142530420275:role/sg-lambda-role
+  deploymentBucket:
+    skipPolicySetup: true
+  apiGateway:
+    binaryMediaTypes:
+      - "*/*"
+  environment:
+    BUCKET_HOST: ""
+    REGION: "us-east-1"
+    KEY_MODULUS_LENGTH: 1024
+    PASSWORD_SALT: 4
+    AWS_SECRET_ACCESS_ID: ""
+    AWS_SECRET_ACCESS_KEY: ""
+
+plugins:
+  - serverless-offline
+  - serverless-package-external
+  - serverless-prune-versions
+  - serverless-plugin-include-dependencies
+  - serverless-prune-plugin
+
+package:
+  excludeDevDependencies: false
+
+custom:
+  serverless-offline:
+    lambdaPort: ${opt:lambdaPort}
+    httpPort: ${opt:httpPort}
+    useInProcess: true
+
+#config
+functions:
+  files_get_init:
+    handler: handler.files_get_init
+    timeout: 25
+    events:
+      - http:
+          path: files/init
+          method: get
+          cors: true
+  auth_post_login:
+    handler: handler.auth_post_login
+    timeout: 25
+    events:
+      - http:
+          path: auth/login
+          method: post
+          cors: true
+  auth_post_register:
+    handler: handler.auth_post_register
+    timeout: 25
+    events:
+      - http:
+          path: auth/register
+          method: post
+          cors: true
+  files_post:
+    handler: handler.files_post
+    timeout: 25
+    events:
+      - http:
+          path: files
+          method: post
+          cors: true
+  files_patch:
+    handler: handler.files_patch
+    timeout: 25
+    events:
+      - http:
+          path: files/{id}
+          method: patch
+          cors: true
+  files_delete:
+    handler: handler.files_delete
+    timeout: 25
+    events:
+      - http:
+          path: files/{id}
+          method: delete
+          cors: true
