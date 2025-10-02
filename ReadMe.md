@@ -1,4 +1,4 @@
-_Because this is a public repo, names of companies and people will be ommitted, with the exception of the author, Bernard Murphy_
+_Because this is a public repo, names of companies and people will be omitted, with the exception of the author, Bernard Murphy_
 
 _All code contained herein was written by Bernard Murphy_
 

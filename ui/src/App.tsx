@@ -10,13 +10,13 @@ import { Toaster } from "./components/ui/sonner";
 import FilesPage from "./pages/files";
 import File from "./pages/files/file";
 import axios from "axios";
+import AuthModal from "./components/auth-modal";
+import { type LoginFormValues } from "./components/forms/login";
+import { type RegisterFormValues } from "./components/forms/register";
 
 interface User {
   username: string;
-  email: string;
-  bio?: string;
   avatar?: string;
-  hrID: number;
 }
 
 interface AppContextType {
@@ -26,12 +26,9 @@ interface AppContextType {
   setAuthWorking: (option: boolean) => void;
 }
 
-// const testUser = {
-//   hrID: 1,
-//   username: "bernard",
-//   email: "lilmilk@gmail.com",
-//   bio: "",
-// };
+const testUser: User = {
+  username: "bernard",
+};
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -45,9 +42,23 @@ export const useApp = () => {
 
 export default function App() {
   const location = useLocation();
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(testUser);
   const [authWorking, setAuthWorking] = useState<boolean>(true);
-  // const [user, setUser] = useState<User | null>(testUser);
+  const [authModalForm, setAuthModalForm] = useState<"login" | "register">(
+    "login"
+  );
+  const [authModalShown, setAuthModalShown] = useState<boolean>(false);
+  const [loginFormValues, setLoginFormValues] = useState<LoginFormValues>({
+    username: "",
+    password: "",
+  });
+  const [registerFormValues, setRegisterFormValues] =
+    useState<RegisterFormValues>({
+      username: "",
+      password: "",
+      password2: "",
+    });
 
   const authInit = () => {
     axios
@@ -74,7 +85,14 @@ export default function App() {
     >
       <div className="min-h-screen transition-colors duration-300 overflow-hidden flex flex-col bg-gray-900 text-white">
         <Navbar />
-
+        <AuthModal
+          authModalForm={authModalForm}
+          authModalShown={authModalShown}
+          loginFormValues={loginFormValues}
+          setLoginFormValues={setLoginFormValues}
+          registerFormValues={registerFormValues}
+          setRegisterFormValues={setRegisterFormValues}
+        />
         <AnimatePresence mode="wait">
           <Routes key={location.pathname} location={location}>
             <Route index element={<CreatePage />} />

@@ -4,6 +4,8 @@ import { transitions as t } from "@/lib/utils";
 
 export interface CreatePageProps {}
 
+export interface FileFormValues {}
+
 // const api = process.env.REACT_APP_API;
 
 export default function CreatePage({}: CreatePageProps) {
