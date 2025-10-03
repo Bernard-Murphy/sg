@@ -65,9 +65,8 @@ export default function AnimatedButton({
 
     setTimeout(() => {
       setPressing(false);
+      onClick?.();
     }, 150);
-
-    onClick?.();
   };
 
   const baseClasses = "overflow-hidden font-medium transition-all duration-200";

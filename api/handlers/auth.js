@@ -1,39 +1,33 @@
-const auth_get_init = (event, context) => {
+const auth_get_init = (event, context, cb) => {
   console.log("auth_get_init");
-  return {
-    context,
-    return: {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+  cb(null, {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
     },
-  };
+    body: JSON.stringify({}),
+  });
 };
 
-const auth_post_login = (event, context) => {
+const auth_post_login = (event, context, cb) => {
   console.log("auth_post_login");
-  return {
-    context,
-    return: {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+  cb(null, {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
     },
-  };
+    body: JSON.stringify({}),
+  });
 };
 
-const auth_post_register = (event, context) => {
+const auth_post_register = (event, context, cb) => {
   console.log("auth_post_register");
   return {
-    context,
-    return: {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
     },
+    body: JSON.stringify({}),
   };
 };
 

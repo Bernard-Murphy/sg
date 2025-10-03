@@ -1,40 +1,34 @@
-const files_post = (event, context) => {
+const files_post = (event, context, cb) => {
   console.log("files_post");
-  return {
-    context,
-    return: {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+  cb(null, {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
     },
-  };
+    body: JSON.stringify({}),
+  });
 };
 
-const files_patch = (event, context) => {
+const files_patch = (event, context, cb) => {
   console.log("files_patch");
-  return {
-    context,
-    return: {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+  cb(null, {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
     },
-  };
+    body: JSON.stringify({}),
+  });
 };
 
-const files_delete = (event, context) => {
+const files_delete = (event, context, cb) => {
   console.log("files_delete");
-  return {
-    context,
-    return: {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
+  cb(null, {
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
     },
-  };
+    body: JSON.stringify({}),
+  });
 };
 
 module.exports = {
