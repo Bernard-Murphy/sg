@@ -1,4 +1,5 @@
 const auth_get_init = (event, context) => {
+  console.log("auth_get_init");
   return {
     context,
     return: {
@@ -11,6 +12,7 @@ const auth_get_init = (event, context) => {
 };
 
 const auth_post_login = (event, context) => {
+  console.log("auth_post_login");
   return {
     context,
     return: {
@@ -23,6 +25,7 @@ const auth_post_login = (event, context) => {
 };
 
 const auth_post_register = (event, context) => {
+  console.log("auth_post_register");
   return {
     context,
     return: {

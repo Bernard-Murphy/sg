@@ -1,4 +1,5 @@
 const files_post = (event, context) => {
+  console.log("files_post");
   return {
     context,
     return: {
@@ -11,6 +12,7 @@ const files_post = (event, context) => {
 };
 
 const files_patch = (event, context) => {
+  console.log("files_patch");
   return {
     context,
     return: {
@@ -23,6 +25,7 @@ const files_patch = (event, context) => {
 };
 
 const files_delete = (event, context) => {
+  console.log("files_delete");
   return {
     context,
     return: {

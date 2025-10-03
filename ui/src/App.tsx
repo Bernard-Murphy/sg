@@ -63,7 +63,9 @@ export default function App() {
   const authInit = () => {
     axios
       .get(process.env.REACT_APP_API + "/auth/init")
-      .then(() => {})
+      .then((res) => {
+        console.log(res.data);
+      })
       .catch((err) => {
         console.log("authInit error", err);
       })
