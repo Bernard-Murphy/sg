@@ -45,21 +45,21 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="flex justify-end align-center space-x-1">
+        <div className="flex justify-end items-center space-x-1">
           <AnimatedButton
             variant="custom"
             onClick={() => navigate("/files")}
             className="w-10 h-10 rounded-full bg-gray-600 overflow-hidden hover:ring-2 hover:ring-blue-400 transition-all cursor-pointer"
           >
-            {user!.avatar ? (
+            {user?.avatar ? (
               <img
-                src={user!.avatar || "/blank-avatar.png"}
+                src={user?.avatar || "/blank-avatar.png"}
                 alt="Avatar"
                 className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold">
-                {user!.username.charAt(0).toUpperCase()}
+                {user?.username.charAt(0).toUpperCase() || "?"}
               </div>
             )}
           </AnimatedButton>

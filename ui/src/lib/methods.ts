@@ -62,35 +62,3 @@ export const abbreviatedText = (text: string, length?: number) => {
 
   return text.length > length ? text.substring(0, length) + "..." : text;
 };
-
-/**
- *
- * @param {JavaScript date} date
- * @returns a human readable date in the format "MM/DD/YYYY"
- */
-export const makeDateHR = (date: Date | string) => {
-  date = new Date(date);
-  let months = date.getMonth() + 1;
-  let days = date.getDate();
-  let years = date.getFullYear();
-  return months + "/" + days + "/" + years;
-};
-
-/**
- *
- * @param {JavaScript date} date
- * @returns a human readable time in the format "0:00AM"
- */
-export const getTimeHR = (date: Date | string) => {
-  date = new Date(date);
-  let meridian = "AM";
-  let hours: string | number = date.getHours();
-  let minutes: string | number = date.getMinutes();
-  if (hours >= 12) meridian = "PM";
-  if (!hours) hours = 12;
-  if (hours > 12) {
-    hours -= 12;
-  }
-  if (String(minutes).length === 1) minutes = `0${minutes}`;
-  return hours + ":" + minutes + meridian;
-};

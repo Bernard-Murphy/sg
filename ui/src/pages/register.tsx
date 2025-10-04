@@ -173,7 +173,7 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
                   className="flex items-center justify-center"
                   key="not-working"
                 >
-                  Register
+                  Submit
                 </motion.div>
               )}
             </AnimatePresence>

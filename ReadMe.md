@@ -4,3 +4,11 @@ _All code contained herein was written by Bernard Murphy_
 
 - 2 Pages - Create, File/List
 - Register/login in modal, icon or modal trigger fixed top right
+
+TO DO:
+
+- backend authentication
+- deployments
+- puppeteer
+- media queries
+- file forms

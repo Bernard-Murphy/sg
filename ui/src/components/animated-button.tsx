@@ -41,7 +41,6 @@ export default function AnimatedButton({
   disabled = false,
   className = "",
   variant = "primary",
-  id = "test",
   ...props
 }: AnimatedButtonProps) {
   const [ripples, setRipples] = useState<
@@ -73,7 +72,7 @@ export default function AnimatedButton({
 
   return (
     <button
-      id={id}
+      // id={id}
       type={type}
       disabled={disabled}
       onClick={handleClick}
