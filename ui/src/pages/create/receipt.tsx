@@ -17,7 +17,7 @@ import {
 import AnimatedButton from "@/components/animated-button";
 
 export default function ReceiptForm() {
-  const { createFormValues, setCreateFormValues } = useApp();
+  const { createFormValues, setCreateFormValues, submitCreateForm } = useApp();
   const r: ReceiptFormValues = createFormValues.receiptFormValues;
 
   const handleChange = (
@@ -32,13 +32,8 @@ export default function ReceiptForm() {
     });
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    console.log(createFormValues);
-  };
-
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={submitCreateForm}>
       <motion.div
         transition={t.transition}
         initial={{

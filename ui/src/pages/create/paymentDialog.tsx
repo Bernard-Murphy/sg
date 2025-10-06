@@ -112,7 +112,7 @@ export default function PaymentDialog({
         </div>
         <DialogFooter className="flex justify-between items-center">
           <div className="flex-1">
-            {!payment?.new && (
+            {!payment?.new && payment?.modalShown && (
               <AnimatedButton
                 variant="destructive"
                 type="button"

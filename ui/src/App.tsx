@@ -25,8 +25,17 @@ import {
   createFormInitialValues,
   type CreateFormValues,
 } from "./lib/createTypes";
+import {
+  login_schema,
+  register_schema,
+  delinquency_notice_schema,
+  statement_schema,
+  receipt_schema,
+} from "@/lib/validations";
 
 export type Category = "delinquency_notice" | "statement" | "receipt";
+
+const authHost = process.env.REACT_APP_AUTH_HOST;
 
 export interface UserFile {
   id: number;
@@ -57,6 +66,7 @@ interface AppContextType {
   setCategorySelected: (cat: Category) => void;
   createFormValues: CreateFormValues;
   setCreateFormValues: (vals: CreateFormValues) => void;
+  submitCreateForm: (e?: React.FormEvent) => void;
 }
 
 const blankLoginValues: LoginFormValues = {
@@ -88,7 +98,7 @@ export default function App() {
   // const [user, setUser] = useState<User | null>(testUser);
   const [categorySelected, setCategorySelected] =
     useState<Category>("delinquency_notice");
-  const [authWorking, setAuthWorking] = useState<boolean>(true);
+  const [authWorking, setAuthWorking] = useState<boolean>(false);
   const [callbackUrl, setCallbackUrl] = useState<string>("/");
   const [loginFormValues, setLoginFormValues] =
     useState<LoginFormValues>(blankLoginValues);
@@ -97,13 +107,19 @@ export default function App() {
   const [createFormValues, setCreateFormValues] = useState<CreateFormValues>(
     createFormInitialValues
   );
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   const authInit = () => {
     axios
-      .get(process.env.REACT_APP_API + "/auth/init")
+      .get(authHost + "/init")
       .then((res) => {
         console.log(res.data);
-        setUser(testUser as User);
+        if (!res?.data?.user) {
+          console.log("response", res);
+          throw "Unexpected response";
+        }
+
+        setUser(res.data.user as User);
       })
       .catch((err) => {
         console.log("authInit error", err);
@@ -115,7 +131,7 @@ export default function App() {
           }
         );
       })
-      .finally(() => setAuthWorking(false));
+      .finally(() => setInitialized(true));
   };
 
   useEffect(() => {
@@ -132,9 +148,101 @@ export default function App() {
     setRegisterFormValues(blankRegisterValues);
   }, [user?.username]);
 
-  const handleAuthSubmit = () => {
-    console.log(loginFormValues);
-    console.log(registerFormValues);
+  const handleAuthSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!["/login", "/register"].includes(location.pathname)) return;
+    setAuthWorking(true);
+
+    try {
+      const isLogin = location.pathname === "/login";
+      const formValues = isLogin ? loginFormValues : registerFormValues;
+
+      const validator = isLogin ? login_schema : register_schema;
+      const authEndpoint = isLogin ? "/login" : "/register";
+      validator.validateSync(formValues, {
+        abortEarly: false,
+      });
+      const res = await axios.post(authHost + authEndpoint, formValues);
+
+      if (!res?.data?.user) {
+        console.log(res);
+        throw "Unexpected response";
+      }
+
+      setUser(res.data.user as User);
+    } catch (err: any) {
+      console.log(err, "auth error");
+      toast.error(
+        err?.inner
+          ? err.inner[0].message
+          : "An error occurred. Check the console for more details.",
+        {
+          position: "top-center",
+          duration: 2000,
+        }
+      );
+    } finally {
+      setAuthWorking(false);
+    }
+  };
+
+  // delinquency_notice_schema,
+  // statement_schema,
+  // receipt_schema,
+  const submitCreateForm = async (e?: React.FormEvent) => {
+    if (e) e?.preventDefault();
+    console.log(createFormValues);
+    try {
+      let response: any;
+      let newFile: UserFile;
+      switch (categorySelected) {
+        case "delinquency_notice":
+          delinquency_notice_schema.validateSync(
+            createFormValues.delinquencyNoticeFormValues,
+            {
+              abortEarly: false,
+            }
+          );
+          response = await axios.post(authHost + "/files", {
+            flavor: "delinquency_notice",
+            values: createFormValues.delinquencyNoticeFormValues,
+          });
+          newFile = response.file;
+          break;
+        case "statement":
+          statement_schema.validateSync(createFormValues.statementFormValues, {
+            abortEarly: false,
+          });
+          response = await axios.post(authHost + "/files", {
+            flavor: "statement",
+            values: createFormValues.statementFormValues,
+          });
+          newFile = response.file;
+          break;
+        case "receipt":
+          receipt_schema.validateSync(createFormValues.receiptFormValues, {
+            abortEarly: false,
+          });
+          response = await axios.post(authHost + "/files", {
+            flavor: "receipt",
+            values: createFormValues.receiptFormValues,
+          });
+          newFile = response.file;
+          break;
+        default:
+          throw `OOB category ${categorySelected}`;
+      }
+    } catch (err: any) {
+      toast.error(
+        err?.inner
+          ? err.inner[0].message
+          : "An unknown error occurred. Check the console for more details.",
+        {
+          position: "top-center",
+          duration: 2000,
+        }
+      );
+    }
   };
 
   return (
@@ -154,49 +262,54 @@ export default function App() {
         setCategorySelected,
         createFormValues,
         setCreateFormValues,
+        submitCreateForm,
       }}
     >
       <div className="h-screen transition-colors duration-300 bg-gray-900 text-white">
-        {!user && authWorking ? (
+        {!initialized ? (
           <div className="h-full w-full flex justify-center items-center">
             <Spinner />
           </div>
         ) : (
           <>
-            <AnimatePresence mode="wait">
-              <motion.div
-                transition={t.transition}
-                exit={{
-                  opacity: 0,
-                  y: -30,
-                }}
-                animate={t.normalize}
-                initial={{
-                  opacity: 0,
-                  y: -30,
-                }}
-                key={user?.id}
-                className="h-full overflow-hidden flex flex-col"
-              >
-                {user && <Navbar />}
-                <AnimatePresence mode="wait">
-                  <Routes key={location.pathname} location={location}>
-                    <Route index element={<CreatePage />} />
-                    <Route
-                      path="login"
-                      element={<LoginPage handleSubmit={handleAuthSubmit} />}
-                    />
-                    <Route
-                      path="register"
-                      element={<RegisterPage handleSubmit={handleAuthSubmit} />}
-                    />
-                    <Route path="files" element={<FilesPage />} />
-                    <Route path="test" element={<Test />} />
-                    <Route path="*" element={<Navigate replace to="/" />} />
-                  </Routes>
-                </AnimatePresence>
-              </motion.div>
-            </AnimatePresence>
+            <div className="h-full overflow-hidden flex flex-col">
+              <AnimatePresence mode="wait">
+                {user && (
+                  <motion.div
+                    transition={t.transition}
+                    initial={{
+                      height: 0,
+                    }}
+                    animate={{
+                      height: "auto",
+                    }}
+                    exit={{
+                      height: 0,
+                    }}
+                    key={user?.id}
+                    className="overflow-hidden"
+                  >
+                    <Navbar />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <AnimatePresence mode="wait">
+                <Routes key={location.pathname} location={location}>
+                  <Route index element={<CreatePage />} />
+                  <Route
+                    path="login"
+                    element={<LoginPage handleSubmit={handleAuthSubmit} />}
+                  />
+                  <Route
+                    path="register"
+                    element={<RegisterPage handleSubmit={handleAuthSubmit} />}
+                  />
+                  <Route path="files" element={<FilesPage />} />
+                  <Route path="test" element={<Test />} />
+                  <Route path="*" element={<Navigate replace to="/" />} />
+                </Routes>
+              </AnimatePresence>
+            </div>
 
             <Toaster position="bottom-right" richColors />
           </>

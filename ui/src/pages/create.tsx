@@ -63,9 +63,19 @@ export default function CreatePage({}: CreatePageProps) {
           ))}
         </div>
       </motion.div>
-      <AnimatePresence mode="wait">
-        {formMap.get(categorySelected)}
-      </AnimatePresence>
+      <motion.div
+        transition={t.transition}
+        exit={{
+          opacity: 0,
+          y: 30,
+        }}
+        animate={t.normalize}
+        initial={t.normalize}
+      >
+        <AnimatePresence mode="wait">
+          {formMap.get(categorySelected)}
+        </AnimatePresence>
+      </motion.div>
     </motion.div>
   );
 }

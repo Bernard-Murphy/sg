@@ -88,6 +88,7 @@ export const transitions = {
     // y: { duration: 0.33 },
     // opacity: { duration: 0.25 },
     // scale: { duration: 0.26 },
+    height: { duration: 0.33 },
     x: { duration: 0.25 },
     y: { duration: 0.25 },
     opacity: { duration: 0.17 },
@@ -95,6 +96,7 @@ export const transitions = {
   },
 
   transition_fast: {
+    height: { duration: 0.25 },
     x: { duration: 0.19 },
     y: { duration: 0.19 },
     opacity: { duration: 0.11 },

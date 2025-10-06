@@ -6,7 +6,7 @@ import DatePicker from "@/components/datepicker";
 import AnimatedButton from "@/components/animated-button";
 
 export default function DelinquencyNoticeForm() {
-  const { createFormValues, setCreateFormValues } = useApp();
+  const { createFormValues, setCreateFormValues, submitCreateForm } = useApp();
 
   const d: DelinquencyNoticeFormValues =
     createFormValues.delinquencyNoticeFormValues;
@@ -33,13 +33,8 @@ export default function DelinquencyNoticeForm() {
     });
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    console.log(createFormValues);
-  };
-
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={submitCreateForm}>
       <motion.div
         transition={t.transition}
         initial={{

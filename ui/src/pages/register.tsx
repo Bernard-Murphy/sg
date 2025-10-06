@@ -42,7 +42,7 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
         transition={t.transition}
         exit={{
           opacity: 0,
-          y: -40,
+          y: 40,
         }}
         animate={t.normalize}
         initial={{
@@ -59,7 +59,7 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
           transition={t.transition}
           exit={{
             opacity: 0,
-            y: -50,
+            y: 50,
           }}
           animate={t.normalize}
           initial={{
@@ -71,7 +71,6 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
           <input
             type="text"
             name="username"
-            required
             value={registerFormValues.username}
             onChange={handleChange}
             className="w-full px-4 py-3 bg-black/20 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
@@ -82,7 +81,7 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
           transition={t.transition}
           exit={{
             opacity: 0,
-            y: -55,
+            y: 55,
           }}
           animate={t.normalize}
           initial={{
@@ -94,7 +93,6 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
           <input
             type="password"
             name="password"
-            required
             value={registerFormValues.password}
             onChange={handleChange}
             className="w-full px-4 py-3 bg-black/20 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
@@ -105,7 +103,7 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
           transition={t.transition}
           exit={{
             opacity: 0,
-            y: -60,
+            y: 60,
           }}
           animate={t.normalize}
           initial={{
@@ -118,8 +116,7 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
           </label>
           <input
             type="password"
-            name="confirmPassword"
-            required
+            name="password2"
             value={registerFormValues.password2}
             onChange={handleChange}
             className="w-full px-4 py-3 bg-black/20 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
@@ -130,7 +127,7 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
           transition={t.transition}
           exit={{
             opacity: 0,
-            y: -75,
+            y: 75,
           }}
           animate={t.normalize}
           initial={{
@@ -183,7 +180,7 @@ export default function RegisterPage({ handleSubmit }: RegisterFormProps) {
           transition={t.transition}
           exit={{
             opacity: 0,
-            y: -85,
+            y: 85,
           }}
           animate={t.normalize}
           initial={{

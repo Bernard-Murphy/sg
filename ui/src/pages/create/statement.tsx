@@ -18,7 +18,7 @@ export default function StatementForm() {
   const [paymentSelected, setPaymentSelected] = useState<LoanPayment | null>(
     null
   );
-  const { createFormValues, setCreateFormValues } = useApp();
+  const { createFormValues, setCreateFormValues, submitCreateForm } = useApp();
   const s: StatementFormValues = createFormValues.statementFormValues;
 
   const payments: LoanPayment[] = s.payments;
@@ -129,13 +129,8 @@ export default function StatementForm() {
     });
   };
 
-  const handleSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    console.log(createFormValues);
-  };
-
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={submitCreateForm}>
       <PaymentDialog
         setModalShown={setPaymentModalShown}
         payment={paymentSelected}
