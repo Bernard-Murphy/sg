@@ -16,6 +16,7 @@ interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     | "outline"
     | "ghost"
     | "link"
+    | "success"
     | "custom";
 }
 
@@ -25,12 +26,14 @@ const variantClasses = {
   secondary:
     "bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-100 px-6 py-3 rounded-lg",
   destructive:
-    "bg-red-400 text-white hover:bg-red-500 disabled:bg-red-300 px-6 py-3 rounded-lg",
+    "bg-red-500 text-white hover:bg-red-600 disabled:bg-red-300 px-6 py-3 rounded-lg",
   outline:
     "bg-gray-700 text-white hover:bg-gray-700 disabled:bg-gray-500 px-6 py-3 rounded-lg",
   ghost:
     "text-white hover:bg-gray-700 disabled:bg-gray-500 px-6 py-3 rounded-lg",
   link: "text-white hover:bg-gray-700 disabled:bg-gray-500 px-6 py-3 rounded-lg",
+  success:
+    "bg-green-600 text-white hover:bg-green-700 disabled:bg-green-400 px-6 py-3 rounded-lg",
   custom: "",
 };
 
@@ -64,8 +67,9 @@ export default function AnimatedButton({
 
     setTimeout(() => {
       setPressing(false);
-      onClick?.();
     }, 150);
+
+    onClick?.();
   };
 
   const baseClasses = "overflow-hidden font-medium transition-all duration-200";

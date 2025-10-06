@@ -53,7 +53,7 @@ export default function CreatePage({}: CreatePageProps) {
               onClick={() => setCategorySelected(category)}
               className={`flex items-center px-4 py-3 rounded-md transition-all cursor-pointer ${
                 categorySelected === category
-                  ? "bg-blue-600 text-white"
+                  ? "bg-blue-900 text-white"
                   : "hover:text-white hover:bg-white/10 text-gray-300"
               }`}
             >

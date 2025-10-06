@@ -62,3 +62,24 @@ export const abbreviatedText = (text: string, length?: number) => {
 
   return text.length > length ? text.substring(0, length) + "..." : text;
 };
+
+/**
+ * @param {String | Number} num - A number (i.e. 1000000)
+ * @returns String - Number with commas appended (i.e. 1,000,000)
+ */
+export const numberWithCommas = (num: number | string) => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export const dolHR = (n: number | string) => {
+  /**
+   * Returns human readable dollar amount from mongo value which is stored in pennies
+   */
+  n = Number(n);
+  n = n.toFixed(2);
+  n = numberWithCommas(n);
+  if (n === "-0.00") {
+    n = "0.00";
+  }
+  return "$" + n;
+};

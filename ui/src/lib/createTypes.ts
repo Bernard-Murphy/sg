@@ -6,16 +6,21 @@ export interface DelinquencyNoticeFormValues {
 
 export type PayType = "cash" | "check" | "card";
 
+export const payTypes: PayType[] = ["cash", "check", "card"];
+
 export interface LoanPayment {
+  new?: boolean;
+  key?: string;
+  modalShown?: boolean;
   payDate: Date;
   payAmount: number;
   payType: PayType;
-  balance: number;
 }
 
 export interface StatementFormValues {
   propertyFullAddress: string;
   payments: LoanPayment[];
+  balance: number;
 }
 
 export interface ReceiptFormValues {
@@ -39,10 +44,17 @@ export const createFormInitialValues: CreateFormValues = {
   statementFormValues: {
     propertyFullAddress: "",
     payments: [],
+    balance: 0,
   },
   receiptFormValues: {
     description: "",
     payAmount: 0,
     payType: "cash",
   },
+};
+
+export const loanPaymentInitialValues: LoanPayment = {
+  payDate: new Date(),
+  payAmount: 0,
+  payType: "cash",
 };
