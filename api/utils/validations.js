@@ -63,4 +63,17 @@ v.statement_schema = y.object().shape({
   balance: y.number().min(0).max(9999999999, "Please enter a lower balance"),
 });
 
+v.receipt_schema = y.object().shape({
+  description: y
+    .string()
+    .max(1024, "Please enter a shorter description")
+    .required("Please enter a description"),
+  payAmount: y
+    .number()
+    .min(1, "Pay amount must be greater than zero")
+    .max(9999999999, "Please enter a smaller pay amount")
+    .required("Please enter a pay amount"),
+  payType: y.string().oneOf(["cash", "check", "card"], "Invalid payment type"),
+});
+
 module.exports = v;

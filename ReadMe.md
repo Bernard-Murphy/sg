@@ -9,6 +9,5 @@ TO DO:
 
 - backend authentication
 - deployments
-- puppeteer
 - media queries
-- file forms
+- documentation/loom video

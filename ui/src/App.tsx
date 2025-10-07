@@ -39,6 +39,7 @@ const authHost = process.env.REACT_APP_AUTH_HOST;
 
 export interface UserFile {
   id: number;
+  userId?: string;
   category: Category;
   key: string;
   timestamp: string;
@@ -143,7 +144,8 @@ export default function App() {
       if (!["/login", "/register"].includes(location.pathname))
         setCallbackUrl(location.pathname);
       navigate("/login");
-    } else navigate(callbackUrl);
+    } else if (!user.files.length) navigate("/");
+    else navigate(callbackUrl);
     setLoginFormValues(blankLoginValues);
     setRegisterFormValues(blankRegisterValues);
   }, [user?.username]);
@@ -186,9 +188,6 @@ export default function App() {
     }
   };
 
-  // delinquency_notice_schema,
-  // statement_schema,
-  // receipt_schema,
   const submitCreateForm = async (e?: React.FormEvent) => {
     if (e) e?.preventDefault();
     console.log(createFormValues);
@@ -204,7 +203,7 @@ export default function App() {
             }
           );
           response = await axios.post(authHost + "/files", {
-            flavor: "delinquency_notice",
+            category: "delinquency_notice",
             values: createFormValues.delinquencyNoticeFormValues,
           });
           newFile = response.file;
@@ -214,7 +213,7 @@ export default function App() {
             abortEarly: false,
           });
           response = await axios.post(authHost + "/files", {
-            flavor: "statement",
+            category: "statement",
             values: createFormValues.statementFormValues,
           });
           newFile = response.file;
@@ -224,7 +223,7 @@ export default function App() {
             abortEarly: false,
           });
           response = await axios.post(authHost + "/files", {
-            flavor: "receipt",
+            category: "receipt",
             values: createFormValues.receiptFormValues,
           });
           newFile = response.file;

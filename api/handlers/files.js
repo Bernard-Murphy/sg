@@ -1,6 +1,47 @@
-const files_post = (event, context, cb) => {
-  console.log("files_post");
+const generatePDF = require("../utils/generatePDF");
+const {
+  putFile,
+  getFilesByUserId,
+  deleteFile,
+} = require("../utils/dynamoClient");
+const { delinquency_notice, statement, receipt } = require("../utils/html");
+const {
+  delinquency_notice_schema,
+  statement_schema,
+  receipt_schema,
+} = require("../utils/validations");
+const { v4: uuid } = require("uuid");
+
+const files_post = async (event, context, cb) => {
+  console.log("files_post", event.body);
+  const { category, values } = event.body;
+
   try {
+    let html;
+    switch (category) {
+      case "delinquency_notice":
+        delinquency_notice_schema.validateSync(values);
+        html = delinquency_notice(values);
+        break;
+      case "statement":
+        statement_schema.validateSync(values);
+        html = statement(values);
+        break;
+      case "receipt":
+        receipt_schema.validateSync(values);
+        html = receipt(values);
+        break;
+      default:
+        console.log(event.body);
+        throw "OOB category";
+    }
+    const key = await generatePDF(html);
+    const userId = uuid(); //temp
+    const file = await putFile({
+      userId,
+      category: category,
+      key,
+    });
     cb(null, {
       statusCode: 200,
       headers: {
