@@ -3,6 +3,7 @@ const {
   PutItemCommand,
   QueryCommand,
   DeleteItemCommand,
+  GetItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 const { v4: uuid } = require("uuid");
 
@@ -60,6 +61,7 @@ const getFilesByUserId = (userId) =>
 const deleteFile = (fileId) =>
   new Promise(async (resolve, reject) => {
     try {
+      console.log("delete", fileId);
       await client.send(
         new DeleteItemCommand({
           TableName: filesTable,
@@ -73,8 +75,52 @@ const deleteFile = (fileId) =>
     }
   });
 
+const getFile = (fileId) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      console.log("getfile", fileId, {
+        TableName: filesTable,
+        Key: {
+          id: { S: fileId },
+        },
+      });
+      // const result = await client.send(
+      //   new GetItemCommand({
+      //     TableName: filesTable,
+      //     Key: { id: { S: fileId } },
+      //   })
+      // );
+      // const result = await client.send(
+      //   new QueryCommand({
+      //     TableName: filesTable,
+      //     IndexName: "id",
+      //     KeyConditionExpression: "id = :id",
+      //     ExpressionAttributeValues: {
+      //       ":id": { S: fileId },
+      //     },
+      //   })
+      // );
+      const result = await client.send(
+        new GetItemCommand({
+          TableName: filesTable,
+          Key: {
+            id: { S: fileId },
+            userId: { S: "c2cca075-5e10-48c1-ad31-0ea8eaef03f2" },
+          },
+        })
+      );
+      console.log(result);
+      if (!result.Items?.length) throw "Not found";
+      resolve(result.Items[0]);
+    } catch (err) {
+      console.log(err, "getFile error", err);
+      reject(err);
+    }
+  });
+
 module.exports = {
   putFile,
   getFilesByUserId,
   deleteFile,
+  getFile,
 };

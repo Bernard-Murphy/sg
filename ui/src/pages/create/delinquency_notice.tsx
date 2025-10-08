@@ -1,12 +1,18 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { transitions as t } from "@/lib/utils";
 import { useApp } from "@/App";
 import { type DelinquencyNoticeFormValues } from "@/lib/createTypes";
 import DatePicker from "@/components/datepicker";
 import AnimatedButton from "@/components/animated-button";
+import Spinner from "@/components/ui/spinner";
 
 export default function DelinquencyNoticeForm() {
-  const { createFormValues, setCreateFormValues, submitCreateForm } = useApp();
+  const {
+    createFormValues,
+    setCreateFormValues,
+    submitCreateForm,
+    categoriesWorking,
+  } = useApp();
 
   const d: DelinquencyNoticeFormValues =
     createFormValues.delinquencyNoticeFormValues;
@@ -32,6 +38,8 @@ export default function DelinquencyNoticeForm() {
       },
     });
   };
+
+  const working = categoriesWorking.includes("delinquency_notice");
 
   return (
     <form onSubmit={submitCreateForm}>
@@ -111,7 +119,33 @@ export default function DelinquencyNoticeForm() {
         }}
         className="mt-4"
       >
-        <AnimatedButton type="submit">Submit</AnimatedButton>
+        <AnimatedButton disabled={working} type="submit">
+          <AnimatePresence mode="wait">
+            {working ? (
+              <motion.div
+                transition={t.transition}
+                exit={t.fade_out_scale_1}
+                animate={t.normalize}
+                initial={t.fade_out}
+                key="working"
+                className="flex items-center justify-center"
+              >
+                <Spinner size="sm" className="mr-2" />
+                Working
+              </motion.div>
+            ) : (
+              <motion.div
+                transition={t.transition}
+                exit={t.fade_out_scale_1}
+                animate={t.normalize}
+                initial={t.fade_out}
+                key="not-working"
+              >
+                Submit
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </AnimatedButton>
       </motion.div>
     </form>
   );

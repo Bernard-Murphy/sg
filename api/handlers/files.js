@@ -3,7 +3,8 @@ const {
   putFile,
   getFilesByUserId,
   deleteFile,
-} = require("../utils/dynamoClient");
+  getFile,
+} = require("../utils/dynamo");
 const { delinquency_notice, statement, receipt } = require("../utils/html");
 const {
   delinquency_notice_schema,
@@ -11,8 +12,10 @@ const {
   receipt_schema,
 } = require("../utils/validations");
 const { v4: uuid } = require("uuid");
+const { normalizeEventBody } = require("../utils/methods");
 
 const files_post = async (event, context, cb) => {
+  event.body = normalizeEventBody(event.body);
   console.log("files_post", event.body);
   const { category, values } = event.body;
 
@@ -41,13 +44,22 @@ const files_post = async (event, context, cb) => {
       userId,
       category: category,
       key,
+      formValues: values,
     });
     cb(null, {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        file: {
+          id: file.id.S,
+          userId: file.userId.S,
+          category: file.category.S,
+          key: file.key.S,
+          timestamp: file.timestamp.S,
+        },
+      }),
     });
   } catch (err) {
     console.log(err, "err files_post");
@@ -61,7 +73,8 @@ const files_post = async (event, context, cb) => {
 };
 
 const files_patch = (event, context, cb) => {
-  console.log("files_patch");
+  event.body = normalizeEventBody(event.body);
+  console.log("files_patch", event.body);
   try {
     cb(null, {
       statusCode: 200,
@@ -81,15 +94,18 @@ const files_patch = (event, context, cb) => {
   }
 };
 
-const files_delete = (event, context, cb) => {
-  console.log("files_delete");
+const files_delete = async (event, context, cb) => {
+  const deleteId = event.pathParameters.deleteId;
+  console.log("files_delete", deleteId);
   try {
+    const file = await getFile(deleteId);
+    console.log("file", file);
+    await deleteFile(deleteId);
     cb(null, {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify({}),
     });
   } catch (err) {
     console.log(err, "err files_delete");

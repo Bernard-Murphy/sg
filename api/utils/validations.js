@@ -1,8 +1,6 @@
 const y = require("yup");
 
-const v = {};
-
-v.login_schema = y.object().shape({
+const login_schema = y.object().shape({
   username: y
     .string()
     .max(1024, "Invalid username or password")
@@ -13,7 +11,7 @@ v.login_schema = y.object().shape({
     .required("Please enter a password"),
 });
 
-v.register_schema = y.object().shape({
+const register_schema = y.object().shape({
   username: y
     .string()
     .min(4, "Username is too short (Min: 4 chars)")
@@ -27,7 +25,7 @@ v.register_schema = y.object().shape({
   password2: y.string().oneOf([y.ref("password")], "Passwords do not match"),
 });
 
-v.delinquency_notice_schema = y.object().shape({
+const delinquency_notice_schema = y.object().shape({
   propertyFullAddress: y
     .string()
     .max(528, "Property address is too long (Max: 512 chars")
@@ -40,7 +38,7 @@ v.delinquency_notice_schema = y.object().shape({
   delinquencyDate: y.date().required("Please enter a delinquency date"),
 });
 
-v.loan_payment_schema = y.object().shape({
+const loan_payment_schema = y.object().shape({
   payDate: y.date().required("Please enter a pay date"),
   payAmount: y
     .number()
@@ -50,7 +48,7 @@ v.loan_payment_schema = y.object().shape({
   payType: y.string().oneOf(["cash", "check", "card"], "Invalid payment type"),
 });
 
-v.statement_schema = y.object().shape({
+const statement_schema = y.object().shape({
   propertyFullAddress: y
     .string()
     .max(528, "Property address is too long (Max: 512 chars")
@@ -63,7 +61,7 @@ v.statement_schema = y.object().shape({
   balance: y.number().min(0).max(9999999999, "Please enter a lower balance"),
 });
 
-v.receipt_schema = y.object().shape({
+const receipt_schema = y.object().shape({
   description: y
     .string()
     .max(1024, "Please enter a shorter description")
@@ -76,4 +74,10 @@ v.receipt_schema = y.object().shape({
   payType: y.string().oneOf(["cash", "check", "card"], "Invalid payment type"),
 });
 
-module.exports = v;
+module.exports = {
+  login_schema,
+  register_schema,
+  delinquency_notice_schema,
+  statement_schema,
+  receipt_schema,
+};

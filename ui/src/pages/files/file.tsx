@@ -10,14 +10,21 @@ import {
 } from "@/components/ui/tooltip";
 import { copyText } from "@/lib/methods";
 import AnimatedButton from "@/components/animated-button";
-import { Copy } from "lucide-react";
+import { Copy, SquarePen, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import DeleteConfirmDialog from "./deleteConfirmDialog";
 
 export default function FileComponent() {
   const { fileSelected } = useApp();
+  const [deleteDialogShown, setDeleteDialogShown] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!fileSelected) setDeleteDialogShown(false);
+  }, [fileSelected?.id]);
 
   if (!fileSelected) return <></>;
 
-  const fileSrc = process.env.REACT_APP_ASSET_LOCATION + fileSelected.key;
+  const fileSrc = process.env.REACT_APP_ASSET_LOCATION + "/" + fileSelected.key;
 
   return (
     <motion.div
@@ -27,9 +34,12 @@ export default function FileComponent() {
       transition={t.transition}
       className="h-full w-full flex flex-col"
     >
+      <DeleteConfirmDialog dialogShown={deleteDialogShown} />
       <div className="flex justify-between items-center">
-        <div className="flex space-x-2 items-center">
-          <h5 className="text-white font-bold">{fileSelected.key}</h5>
+        <div className="text-gray-300">
+          {moment(fileSelected.timestamp).format("MMMM Do YYYY, h:mm a")}
+        </div>
+        <div className="flex space-x-4 items-center">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger className="w-full my-1">
@@ -46,10 +56,38 @@ export default function FileComponent() {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </div>
-
-        <div className="text-gray-300">
-          {moment(fileSelected.timestamp).format("MMMM Do YYYY, h:mm a")}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="w-full my-1">
+                <AnimatedButton
+                  variant="custom"
+                  className="w-full px-0 py-0"
+                  onClick={() => copyText(fileSrc)}
+                >
+                  <SquarePen />
+                </AnimatedButton>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Edit</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="w-full my-1">
+                <AnimatedButton
+                  variant="custom"
+                  className="w-full px-0 py-0"
+                  onClick={() => setDeleteDialogShown(true)}
+                >
+                  <Trash2 />
+                </AnimatedButton>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Remove</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       <hr className="my-2" />

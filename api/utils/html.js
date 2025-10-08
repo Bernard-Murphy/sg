@@ -12,9 +12,9 @@ const delinquency_notice = ({
       "MMMM Do YYYY"
     )}</p>
     <p class="mb-5">Dear Customer,</p>
-    <p>This notice is to inform you that your account, is in delinquency for the property located at ${propertyFullAddress} for the amount of ${dolHR(
+    <p>This notice is to inform you that your account, is in delinquency for the property located at ${propertyFullAddress} for the amount of <span class="bold">${dolHR(
   loanAmount
-)}. Please reach out to your loan officer at your earliest convenience.</p>
+)}</span>. Please reach out to your loan officer at your earliest convenience.</p>
 `;
 
 const statement = ({ propertyFullAddress, payments, balance }) => `

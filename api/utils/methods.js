@@ -1,6 +1,4 @@
-const m = {};
-
-m.normalizeEventBody = (eventBody) => {
+const normalizeEventBody = (eventBody) => {
   try {
     if (typeof eventBody === "object")
       return {
@@ -25,11 +23,11 @@ m.normalizeEventBody = (eventBody) => {
  * @param {String | Number} num - A number (i.e. 1000000)
  * @returns String - Number with commas appended (i.e. 1,000,000)
  */
-export const numberWithCommas = (num) => {
+const numberWithCommas = (num) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-export const dolHR = (n) => {
+const dolHR = (n) => {
   /**
    * Returns human readable dollar amount from mongo value which is stored in pennies
    */
@@ -42,4 +40,8 @@ export const dolHR = (n) => {
   return "$" + n;
 };
 
-module.exports = m;
+module.exports = {
+  dolHR,
+  normalizeEventBody,
+  numberWithCommas,
+};

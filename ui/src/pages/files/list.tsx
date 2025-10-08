@@ -5,6 +5,7 @@ import { type UserFile } from "@/App";
 import AnimatedButton from "@/components/animated-button";
 import iconMap from "@/lib/iconMap";
 import { abbreviatedText } from "@/lib/methods";
+import moment from "moment";
 
 export default function FileList() {
   const { user, fileSelected, setFileSelected } = useApp();
@@ -37,7 +38,10 @@ export default function FileList() {
               >
                 {iconMap.get(file.category)}
                 <span className="profile-menu-item-text">
-                  {abbreviatedText(file.key, 25)}
+                  {abbreviatedText(
+                    moment(file.timestamp).format("MMMM Do YYYY, h:mm a"),
+                    25
+                  )}
                 </span>
               </AnimatedButton>
             </div>

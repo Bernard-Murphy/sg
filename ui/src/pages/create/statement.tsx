@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { transitions as t } from "@/lib/utils";
 import { useApp } from "@/App";
 import AnimatedButton from "@/components/animated-button";
@@ -13,12 +13,18 @@ import moment from "moment";
 import { Plus } from "lucide-react";
 import PaymentDialog from "./paymentDialog";
 import { dolHR } from "@/lib/methods";
+import Spinner from "@/components/ui/spinner";
 
 export default function StatementForm() {
   const [paymentSelected, setPaymentSelected] = useState<LoanPayment | null>(
     null
   );
-  const { createFormValues, setCreateFormValues, submitCreateForm } = useApp();
+  const {
+    createFormValues,
+    setCreateFormValues,
+    submitCreateForm,
+    categoriesWorking,
+  } = useApp();
   const s: StatementFormValues = createFormValues.statementFormValues;
 
   const payments: LoanPayment[] = s.payments;
@@ -122,12 +128,14 @@ export default function StatementForm() {
   ) => {
     setCreateFormValues({
       ...createFormValues,
-      delinquencyNoticeFormValues: {
-        ...createFormValues.delinquencyNoticeFormValues,
+      statementFormValues: {
+        ...createFormValues.statementFormValues,
         [e.target.name as keyof typeof s]: e.target.value,
       },
     });
   };
+
+  const working = categoriesWorking.includes("statement");
 
   return (
     <form onSubmit={submitCreateForm}>
@@ -174,12 +182,38 @@ export default function StatementForm() {
               value={s.balance}
               onChange={handleChange}
               min={0}
-              name="loanAmount"
+              name="balance"
               className="w-full px-4 py-3 bg-black/20 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
             />
           </div>
           <div className="mt-4">
-            <AnimatedButton type="submit">Submit</AnimatedButton>
+            <AnimatedButton disabled={working} type="submit">
+              <AnimatePresence mode="wait">
+                {working ? (
+                  <motion.div
+                    transition={t.transition}
+                    exit={t.fade_out_scale_1}
+                    animate={t.normalize}
+                    initial={t.fade_out}
+                    key="working"
+                    className="flex items-center justify-center"
+                  >
+                    <Spinner size="sm" className="mr-2" />
+                    Working
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    transition={t.transition}
+                    exit={t.fade_out_scale_1}
+                    animate={t.normalize}
+                    initial={t.fade_out}
+                    key="not-working"
+                  >
+                    Submit
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </AnimatedButton>
           </div>
         </motion.div>
         <motion.div
@@ -199,6 +233,7 @@ export default function StatementForm() {
             <div className="flex justify-between items-center mb-4">
               <h4 className="text-2xl font-bold">Payments</h4>
               <AnimatedButton
+                disabled={working}
                 onClick={newPayment}
                 className="flex justify-between items-center"
               >

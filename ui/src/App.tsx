@@ -36,13 +36,15 @@ import {
 export type Category = "delinquency_notice" | "statement" | "receipt";
 
 const authHost = process.env.REACT_APP_AUTH_HOST;
+const api = process.env.REACT_APP_API_ROOT;
 
 export interface UserFile {
-  id: number;
+  id: string;
   userId?: string;
   category: Category;
   key: string;
   timestamp: string;
+  formValues: string;
 }
 
 export interface User {
@@ -68,6 +70,10 @@ interface AppContextType {
   createFormValues: CreateFormValues;
   setCreateFormValues: (vals: CreateFormValues) => void;
   submitCreateForm: (e?: React.FormEvent) => void;
+  categoriesWorking: Category[];
+  setCategoriesWorking: (categories: Category[]) => void;
+  filesDeleting: string[];
+  deleteFile: () => void;
 }
 
 const blankLoginValues: LoginFormValues = {
@@ -94,9 +100,11 @@ export const useApp = () => {
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
   const [fileSelected, setFileSelected] = useState<UserFile | null>(null);
-  // const [user, setUser] = useState<User | null>(testUser);
+  const [categoriesWorking, setCategoriesWorking] = useState<Category[]>([]);
+  const [filesDeleting, setFilesDeleting] = useState<string[]>([]);
+  const [user, setUser] = useState<User | null>(testUser);
   const [categorySelected, setCategorySelected] =
     useState<Category>("delinquency_notice");
   const [authWorking, setAuthWorking] = useState<boolean>(false);
@@ -189,12 +197,15 @@ export default function App() {
   };
 
   const submitCreateForm = async (e?: React.FormEvent) => {
-    if (e) e?.preventDefault();
-    console.log(createFormValues);
     try {
+      if (!user) return;
+      if (e) e?.preventDefault();
+      console.log(createFormValues);
+      const category = categorySelected;
+      setCategoriesWorking([...categoriesWorking, category]);
       let response: any;
       let newFile: UserFile;
-      switch (categorySelected) {
+      switch (category) {
         case "delinquency_notice":
           delinquency_notice_schema.validateSync(
             createFormValues.delinquencyNoticeFormValues,
@@ -202,35 +213,59 @@ export default function App() {
               abortEarly: false,
             }
           );
-          response = await axios.post(authHost + "/files", {
+          response = await axios.post(api + "/files", {
             category: "delinquency_notice",
             values: createFormValues.delinquencyNoticeFormValues,
           });
-          newFile = response.file;
+          newFile = response.data.file;
+          setCreateFormValues({
+            ...createFormInitialValues,
+            delinquencyNoticeFormValues:
+              createFormInitialValues.delinquencyNoticeFormValues,
+          });
           break;
         case "statement":
           statement_schema.validateSync(createFormValues.statementFormValues, {
             abortEarly: false,
           });
-          response = await axios.post(authHost + "/files", {
+          response = await axios.post(api + "/files", {
             category: "statement",
             values: createFormValues.statementFormValues,
           });
-          newFile = response.file;
+          newFile = response.data.file;
+          setCreateFormValues({
+            ...createFormInitialValues,
+            statementFormValues: createFormInitialValues.statementFormValues,
+          });
           break;
         case "receipt":
           receipt_schema.validateSync(createFormValues.receiptFormValues, {
             abortEarly: false,
           });
-          response = await axios.post(authHost + "/files", {
+          response = await axios.post(api + "/files", {
             category: "receipt",
             values: createFormValues.receiptFormValues,
           });
-          newFile = response.file;
+          newFile = response.data.file;
+          setCreateFormValues({
+            ...createFormInitialValues,
+            receiptFormValues: createFormInitialValues.receiptFormValues,
+          });
           break;
         default:
-          throw `OOB category ${categorySelected}`;
+          throw `OOB category ${category}`;
       }
+      if (!newFile) {
+        console.log(newFile, response);
+        throw "Server did not return a file";
+      }
+
+      setUser({
+        ...user,
+        files: [newFile, ...user.files],
+      });
+      setFileSelected(newFile);
+      navigate("/files");
     } catch (err: any) {
       toast.error(
         err?.inner
@@ -242,6 +277,37 @@ export default function App() {
         }
       );
     }
+    setCategoriesWorking(
+      categoriesWorking.filter((c) => c !== categorySelected)
+    );
+  };
+
+  const deleteFile = async () => {
+    if (!fileSelected || !user) return;
+
+    const deleteId = fileSelected.id;
+    setFilesDeleting([...filesDeleting, deleteId]);
+    try {
+      const response = await axios.delete(api + "/files/" + deleteId);
+      console.log(response);
+
+      setFileSelected(null);
+      setUser({
+        ...user,
+        files: user.files.filter((file) => file.id !== deleteId),
+      });
+    } catch (err: any) {
+      toast.error(
+        err?.inner
+          ? err.inner[0].message
+          : "An unknown error occurred. Check the console for more details.",
+        {
+          position: "top-center",
+          duration: 2000,
+        }
+      );
+    }
+    setFilesDeleting(filesDeleting.filter((file) => file !== deleteId));
   };
 
   return (
@@ -262,6 +328,10 @@ export default function App() {
         createFormValues,
         setCreateFormValues,
         submitCreateForm,
+        categoriesWorking,
+        setCategoriesWorking,
+        filesDeleting,
+        deleteFile,
       }}
     >
       <div className="h-screen transition-colors duration-300 bg-gray-900 text-white">

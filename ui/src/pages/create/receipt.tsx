@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { transitions as t } from "@/lib/utils";
 import {
   payTypes,
@@ -15,9 +15,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AnimatedButton from "@/components/animated-button";
+import Spinner from "@/components/ui/spinner";
 
 export default function ReceiptForm() {
-  const { createFormValues, setCreateFormValues, submitCreateForm } = useApp();
+  const {
+    createFormValues,
+    setCreateFormValues,
+    submitCreateForm,
+    categoriesWorking,
+  } = useApp();
   const r: ReceiptFormValues = createFormValues.receiptFormValues;
 
   const handleChange = (
@@ -31,6 +37,8 @@ export default function ReceiptForm() {
       },
     });
   };
+
+  const working = categoriesWorking.includes("receipt");
 
   return (
     <form onSubmit={submitCreateForm}>
@@ -128,7 +136,33 @@ export default function ReceiptForm() {
         }}
         className="mt-4 flex justify-between items-center space-x-2"
       >
-        <AnimatedButton type="submit">Submit</AnimatedButton>
+        <AnimatedButton disabled={working} type="submit">
+          <AnimatePresence mode="wait">
+            {working ? (
+              <motion.div
+                transition={t.transition}
+                exit={t.fade_out_scale_1}
+                animate={t.normalize}
+                initial={t.fade_out}
+                key="working"
+                className="flex items-center justify-center"
+              >
+                <Spinner size="sm" className="mr-2" />
+                Working
+              </motion.div>
+            ) : (
+              <motion.div
+                transition={t.transition}
+                exit={t.fade_out_scale_1}
+                animate={t.normalize}
+                initial={t.fade_out}
+                key="not-working"
+              >
+                Submit
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </AnimatedButton>
       </motion.div>
     </form>
   );

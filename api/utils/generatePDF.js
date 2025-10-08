@@ -3,10 +3,11 @@ const puppeteer = require("puppeteer-core");
 const crypto = require("crypto");
 const {
   S3Client,
-  GetObjectCommand,
+  // GetObjectCommand,
   PutObjectCommand,
 } = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+// const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+// const fs = require("fs");
 
 const assetUrl = process.env.ASSET_URL;
 console.log("assets", assetUrl);
@@ -25,6 +26,7 @@ const generatePDF = async (html, options) => {
     headless: true,
     ignoreHTTPSErrors: true,
   });
+  console.log("launched");
   const page = await browser.newPage();
   page.on("console", (message) => console.log(message.text()));
   const fullPageHTML = `
@@ -47,10 +49,20 @@ const generatePDF = async (html, options) => {
             ${html}
         </body>
     `;
-  const hash = crypto.createHash("md5").update(fullPageHTML).digest("hex");
+  const hash = crypto
+    .createHash("md5")
+    .update(fullPageHTML + new Date().toISOString())
+    .digest("hex");
   // console.log(fullPageHTML);
   const Key = process.env.PDF_FOLDER + "/" + hash + ".pdf";
-  console.log(Key);
+  // console.log(Key);
+  await page.setJavaScriptEnabled(true);
+  page.on("console", (message) => console.log(message.text()));
+  await page.setContent(fullPageHTML, {
+    waitLoad: true,
+    waitNetworkIdle: true,
+  });
+  console.log("loaded");
   const data_uint8 = await page.pdf({
     timeout: 300000000,
     format: "A4",
@@ -62,9 +74,19 @@ const generatePDF = async (html, options) => {
       left: "1in",
     },
     ...options,
+    // timeout: 300000000,
+    // format: "A4",
+    // printBackground: true,
+    // margin: {
+    //   top: "1in",
+    //   right: "0.5in",
+    //   bottom: "1in",
+    //   left: "0.5in",
+    // },
   });
   browser.close();
   console.log("res", data_uint8);
+  // fs.writeFileSync("/home/bernard/Documents/work/sg/test.pdf", data_uint8);
   const buffer = Buffer.from(data_uint8);
   await s3.send(
     new PutObjectCommand({
@@ -75,6 +97,7 @@ const generatePDF = async (html, options) => {
       ACL: "public-read",
     })
   );
+  console.log("s3");
   // const getObjectCommand = new GetObjectCommand({
   //   Bucket: process.env.ASSET_BUCKET,
   //   Key,
@@ -85,4 +108,4 @@ const generatePDF = async (html, options) => {
   return Key;
 };
 
-export default generatePDF;
+module.exports = generatePDF;
