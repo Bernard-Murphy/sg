@@ -17,7 +17,11 @@ import {
 import AnimatedButton from "@/components/animated-button";
 import Spinner from "@/components/ui/spinner";
 
-export default function ReceiptForm() {
+export interface ReceiptFormProps {
+  fromEditPage?: boolean;
+}
+
+export default function ReceiptForm({ fromEditPage }: ReceiptFormProps) {
   const {
     createFormValues,
     setCreateFormValues,

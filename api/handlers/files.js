@@ -16,7 +16,6 @@ const { normalizeEventBody } = require("../utils/methods");
 
 const files_post = async (event, context, cb) => {
   event.body = normalizeEventBody(event.body);
-  console.log("files_post", event.body);
   const { category, values } = event.body;
 
   try {
@@ -96,11 +95,9 @@ const files_patch = (event, context, cb) => {
 
 const files_delete = async (event, context, cb) => {
   const deleteId = event.pathParameters.deleteId;
-  console.log("files_delete", deleteId);
   try {
     const file = await getFile(deleteId);
-    console.log("file", file);
-    await deleteFile(deleteId);
+    await deleteFile(deleteId, file.key.S);
     cb(null, {
       statusCode: 200,
       headers: {

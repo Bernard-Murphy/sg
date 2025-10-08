@@ -10,12 +10,10 @@ const {
 // const fs = require("fs");
 
 const assetUrl = process.env.ASSET_URL;
-console.log("assets", assetUrl);
 
 const s3 = new S3Client({});
 
 const generatePDF = async (html, options) => {
-  console.log("START");
   if (!options) options = {};
   const browser = await puppeteer.launch({
     args: chromium.args,
@@ -26,7 +24,6 @@ const generatePDF = async (html, options) => {
     headless: true,
     ignoreHTTPSErrors: true,
   });
-  console.log("launched");
   const page = await browser.newPage();
   page.on("console", (message) => console.log(message.text()));
   const fullPageHTML = `
@@ -62,7 +59,6 @@ const generatePDF = async (html, options) => {
     waitLoad: true,
     waitNetworkIdle: true,
   });
-  console.log("loaded");
   const data_uint8 = await page.pdf({
     timeout: 300000000,
     format: "A4",
@@ -85,7 +81,6 @@ const generatePDF = async (html, options) => {
     // },
   });
   browser.close();
-  console.log("res", data_uint8);
   // fs.writeFileSync("/home/bernard/Documents/work/sg/test.pdf", data_uint8);
   const buffer = Buffer.from(data_uint8);
   await s3.send(
@@ -97,7 +92,6 @@ const generatePDF = async (html, options) => {
       ACL: "public-read",
     })
   );
-  console.log("s3");
   // const getObjectCommand = new GetObjectCommand({
   //   Bucket: process.env.ASSET_BUCKET,
   //   Key,

@@ -15,10 +15,12 @@ import { transitions as t } from "@/lib/utils";
 
 export interface DeleteConfirmDialogProps {
   dialogShown: boolean;
+  setDialogShown: (option: boolean) => void;
 }
 
 export default function DeleteConfirmDialog({
   dialogShown,
+  setDialogShown,
 }: DeleteConfirmDialogProps) {
   const { fileSelected, deleteFile, filesDeleting } = useApp();
 
@@ -56,7 +58,9 @@ export default function DeleteConfirmDialog({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel onClick={() => setDialogShown(false)}>
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction onClick={deleteFile}>
                   Continue
                 </AlertDialogAction>

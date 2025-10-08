@@ -6,10 +6,12 @@ const {
   GetItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 const { v4: uuid } = require("uuid");
+const { S3Client, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 
 const filesTable = process.env.DYNAMO_FILES_TABLE;
 
 const client = new DynamoDBClient({});
+const s3 = new S3Client({});
 
 const putFile = async ({ id, userId, category, key }) =>
   new Promise(async (resolve, reject) => {
@@ -58,14 +60,21 @@ const getFilesByUserId = (userId) =>
     }
   });
 
-const deleteFile = (fileId) =>
+const deleteFile = (fileId, Key) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log("delete", fileId);
       await client.send(
         new DeleteItemCommand({
           TableName: filesTable,
-          Key: fileId,
+          Key: {
+            id: { S: fileId },
+          },
+        })
+      );
+      await s3.send(
+        new DeleteObjectCommand({
+          Bucket: process.env.ASSET_BUCKET,
+          Key,
         })
       );
       resolve();
@@ -78,40 +87,16 @@ const deleteFile = (fileId) =>
 const getFile = (fileId) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log("getfile", fileId, {
-        TableName: filesTable,
-        Key: {
-          id: { S: fileId },
-        },
-      });
-      // const result = await client.send(
-      //   new GetItemCommand({
-      //     TableName: filesTable,
-      //     Key: { id: { S: fileId } },
-      //   })
-      // );
-      // const result = await client.send(
-      //   new QueryCommand({
-      //     TableName: filesTable,
-      //     IndexName: "id",
-      //     KeyConditionExpression: "id = :id",
-      //     ExpressionAttributeValues: {
-      //       ":id": { S: fileId },
-      //     },
-      //   })
-      // );
       const result = await client.send(
         new GetItemCommand({
           TableName: filesTable,
           Key: {
             id: { S: fileId },
-            userId: { S: "c2cca075-5e10-48c1-ad31-0ea8eaef03f2" },
           },
         })
       );
-      console.log(result);
-      if (!result.Items?.length) throw "Not found";
-      resolve(result.Items[0]);
+      if (!result.Item) throw `Not found - ${fileId}`;
+      resolve(result.Item);
     } catch (err) {
       console.log(err, "getFile error", err);
       reject(err);

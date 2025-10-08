@@ -15,7 +15,11 @@ import PaymentDialog from "./paymentDialog";
 import { dolHR } from "@/lib/methods";
 import Spinner from "@/components/ui/spinner";
 
-export default function StatementForm() {
+export interface StatementFormProps {
+  fromEditPage?: boolean;
+}
+
+export default function StatementForm({ fromEditPage }: StatementFormProps) {
   const [paymentSelected, setPaymentSelected] = useState<LoanPayment | null>(
     null
   );

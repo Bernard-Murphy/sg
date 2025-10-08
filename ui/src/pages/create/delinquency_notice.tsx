@@ -6,7 +6,13 @@ import DatePicker from "@/components/datepicker";
 import AnimatedButton from "@/components/animated-button";
 import Spinner from "@/components/ui/spinner";
 
-export default function DelinquencyNoticeForm() {
+export interface DelinquencyNoticeFormProps {
+  fromEditPage?: boolean;
+}
+
+export default function DelinquencyNoticeForm({
+  fromEditPage,
+}: DelinquencyNoticeFormProps) {
   const {
     createFormValues,
     setCreateFormValues,

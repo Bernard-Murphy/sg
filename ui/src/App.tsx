@@ -74,6 +74,8 @@ interface AppContextType {
   setCategoriesWorking: (categories: Category[]) => void;
   filesDeleting: string[];
   deleteFile: () => void;
+  isSavingChanges: boolean;
+  setIsSavingChanges: (option: boolean) => void;
 }
 
 const blankLoginValues: LoginFormValues = {
@@ -117,6 +119,7 @@ export default function App() {
     createFormInitialValues
   );
   const [initialized, setInitialized] = useState<boolean>(false);
+  const [isSavingChanges, setIsSavingChanges] = useState<boolean>(false);
 
   const authInit = () => {
     axios
@@ -332,6 +335,8 @@ export default function App() {
         setCategoriesWorking,
         filesDeleting,
         deleteFile,
+        isSavingChanges,
+        setIsSavingChanges,
       }}
     >
       <div className="h-screen transition-colors duration-300 bg-gray-900 text-white">

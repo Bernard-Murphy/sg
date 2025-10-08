@@ -17,6 +17,7 @@ const normalizeEventBody = (eventBody) => {
   } catch (err) {
     console.log(err, "normalizeEventBody error");
   }
+  return eventBody;
 };
 
 /**

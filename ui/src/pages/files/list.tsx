@@ -19,7 +19,10 @@ export default function FileList() {
       className="w-1/4 overflow-x-hidden scrollbar-hidden"
     >
       {user?.files
-        .sort((a, b) => b.id - a.id)
+        .sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        )
         .map((file: UserFile) => {
           return (
             <div key={file.key}>
