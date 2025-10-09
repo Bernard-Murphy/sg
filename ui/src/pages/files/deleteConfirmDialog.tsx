@@ -36,10 +36,10 @@ export default function DeleteConfirmDialog({
               initial={t.fade_out}
               animate={t.normalize}
               exit={t.fade_out}
-              className="flex flex-col justify-center items-center"
+              className="flex flex-col justify-center items-center p-5"
             >
-              <Spinner size="lg" hashColor="#eee" />
-              <h5 className="text-center text-3xl mt-5 text-white">Working</h5>
+              <Spinner size="md" hashColor="#eee" />
+              <h5 className="text-center text-2xl mt-5 text-white">Deleting</h5>
             </motion.div>
           ) : (
             <motion.div

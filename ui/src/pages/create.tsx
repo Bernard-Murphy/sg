@@ -4,25 +4,28 @@ import { transitions as t } from "@/lib/utils";
 import { useApp, type Category } from "@/App";
 import iconMap from "@/lib/iconMap";
 import AnimatedButton from "@/components/animated-button";
-import DelinquencyNoticeForm from "./create/delinquency_notice";
-import ReceiptForm from "./create/receipt";
-import StatementForm from "./create/statement";
+import { useEffect } from "react";
+import { createFormInitialValues, formMap } from "@/lib/createTypes";
 
 export interface CreatePageProps {}
 
 export interface FileFormValues {}
 
-const formMap = new Map([
-  ["delinquency_notice", <DelinquencyNoticeForm key="delinquency_notice" />],
-  ["receipt", <ReceiptForm key="receipt" />],
-  ["statement", <StatementForm key="statement" />],
-]);
-
 // const api = process.env.REACT_APP_API;
 
 export default function CreatePage({}: CreatePageProps) {
-  const { categorySelected, setCategorySelected } = useApp();
+  const { categorySelected, setCategorySelected, setCreateFormValues } =
+    useApp();
   const categories: Category[] = ["delinquency_notice", "statement", "receipt"];
+
+  useEffect(() => {
+    setCreateFormValues(createFormInitialValues);
+    setCategorySelected("delinquency_notice");
+  }, []);
+
+  const FormComponent: React.ElementType = formMap.get(
+    categorySelected
+  ) as React.ElementType;
 
   return (
     <motion.div
@@ -30,7 +33,7 @@ export default function CreatePage({}: CreatePageProps) {
       exit={t.fade_out_scale_1}
       animate={t.normalize}
       initial={t.fade_out_scale_1}
-      className="container mx-auto px-6 py-8 flex-1"
+      className="container mx-auto px-2 sm:px-6 pt-8 py-0 sm:py-8 flex-1"
     >
       <motion.div
         transition={t.transition}
@@ -51,14 +54,17 @@ export default function CreatePage({}: CreatePageProps) {
               variant="custom"
               key={category}
               onClick={() => setCategorySelected(category)}
-              className={`flex items-center px-4 py-3 rounded-md transition-all cursor-pointer ${
+              className={`flex flex-grow sm:flex-grow-0 justify-center sm:justify-start items-center px-4 py-3 rounded-md transition-all cursor-pointer ${
                 categorySelected === category
                   ? "bg-blue-900 text-white"
                   : "hover:text-white hover:bg-white/10 text-gray-300"
               }`}
+              type="button"
             >
-              <span className="mr-2">{iconMap.get(category)}</span>
-              <span className="capitalize">{category.replace("_", " ")}</span>
+              <span className="sm:mr-2">{iconMap.get(category)}</span>
+              <span className="sm:block hidden capitalize">
+                {category.replace("_", " ")}
+              </span>
             </AnimatedButton>
           ))}
         </div>
@@ -73,7 +79,7 @@ export default function CreatePage({}: CreatePageProps) {
         initial={t.normalize}
       >
         <AnimatePresence mode="wait">
-          {formMap.get(categorySelected)}
+          <FormComponent key={categorySelected} />
         </AnimatePresence>
       </motion.div>
     </motion.div>

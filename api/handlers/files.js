@@ -43,8 +43,9 @@ const files_post = async (event, context, cb) => {
       userId,
       category: category,
       key,
-      formValues: values,
+      formValues: JSON.stringify(values),
     });
+    console.log(file);
     cb(null, {
       statusCode: 200,
       headers: {
@@ -57,6 +58,7 @@ const files_post = async (event, context, cb) => {
           category: file.category.S,
           key: file.key.S,
           timestamp: file.timestamp.S,
+          formValues: file.formValues.S,
         },
       }),
     });
@@ -71,16 +73,54 @@ const files_post = async (event, context, cb) => {
   }
 };
 
-const files_patch = (event, context, cb) => {
+const files_patch = async (event, context, cb) => {
   event.body = normalizeEventBody(event.body);
+  const { category, values } = event.body;
   console.log("files_patch", event.body);
+
   try {
+    let html;
+    switch (category) {
+      case "delinquency_notice":
+        delinquency_notice_schema.validateSync(values);
+        html = delinquency_notice(values);
+        break;
+      case "statement":
+        statement_schema.validateSync(values);
+        html = statement(values);
+        break;
+      case "receipt":
+        receipt_schema.validateSync(values);
+        html = receipt(values);
+        break;
+      default:
+        console.log(event.body);
+        throw "OOB category";
+    }
+    const key = await generatePDF(html);
+    const userId = uuid(); //temp
+    const file = await putFile({
+      id: event.pathParameters.patchId,
+      userId,
+      category: category,
+      key,
+      formValues: JSON.stringify(values),
+    });
     cb(null, {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        file: {
+          id: file.id.S,
+          userId: file.userId.S,
+          category: file.category.S,
+          key: file.key.S,
+          timestamp: file.timestamp.S,
+          formValues: file.formValues.S,
+        },
+      }),
     });
   } catch (err) {
     console.log(err, "err files_patch");

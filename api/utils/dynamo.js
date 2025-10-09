@@ -13,7 +13,7 @@ const filesTable = process.env.DYNAMO_FILES_TABLE;
 const client = new DynamoDBClient({});
 const s3 = new S3Client({});
 
-const putFile = async ({ id, userId, category, key }) =>
+const putFile = async ({ id, userId, category, key, formValues }) =>
   new Promise(async (resolve, reject) => {
     try {
       if (!id) id = uuid();
@@ -24,8 +24,8 @@ const putFile = async ({ id, userId, category, key }) =>
         category: { S: category },
         key: { S: key },
         timestamp: { S: new Date().toISOString() },
+        formValues: { S: formValues },
       };
-
       await client.send(
         new PutItemCommand({
           TableName: filesTable,

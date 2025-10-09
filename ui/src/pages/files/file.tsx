@@ -10,31 +10,66 @@ import {
 } from "@/components/ui/tooltip";
 import { copyText } from "@/lib/methods";
 import AnimatedButton from "@/components/animated-button";
-import { Copy, SquarePen, Trash2 } from "lucide-react";
+import { Copy, SquarePen, Trash2, CircleX } from "lucide-react";
 import { useEffect, useState } from "react";
 import DeleteConfirmDialog from "./deleteConfirmDialog";
-import DelinquencyNoticeForm from "../create/delinquency_notice";
-import ReceiptForm from "../create/receipt";
-import StatementForm from "../create/statement";
-
-const formMap = new Map([
-  ["delinquency_notice", <DelinquencyNoticeForm key="delinquency_notice" />],
-  ["receipt", <ReceiptForm key="receipt" />],
-  ["statement", <StatementForm key="statement" />],
-]);
+import {
+  createFormInitialValues,
+  formMap,
+  categoryFormMap,
+  type CreateFormValues,
+  type LoanPayment,
+} from "@/lib/createTypes";
+import Spinner from "@/components/ui/spinner";
 
 export default function FileComponent() {
-  const { fileSelected } = useApp();
+  const {
+    fileSelected,
+    setCreateFormValues,
+    categoriesWorking,
+    setCategorySelected,
+  } = useApp();
   const [deleteDialogShown, setDeleteDialogShown] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [file, setFile] = useState<UserFile | null>(fileSelected);
 
   useEffect(() => {
     if (!fileSelected) setDeleteDialogShown(false);
-  }, [fileSelected?.id]);
+    else {
+      const thisFile = {
+        ...fileSelected,
+      };
+      setFile(thisFile);
+      let formValues = JSON.parse(thisFile.formValues);
+      if (formValues.delinquencyDate)
+        formValues.delinquencyDate = new Date(formValues.delinquencyDate);
+      if (formValues.payments)
+        formValues.payments = formValues.payments.map(
+          (payment: LoanPayment) => ({
+            ...payment,
+            payDate: new Date(payment.payDate),
+          })
+        );
+      setCreateFormValues({
+        ...createFormInitialValues,
+        [categoryFormMap.get(thisFile.category) as keyof CreateFormValues]: {
+          ...formValues,
+        },
+      });
+      setCategorySelected(thisFile.category);
+    }
+  }, []);
 
-  if (!fileSelected) return <></>;
+  useEffect(() => {
+    if (!categoriesWorking.length) setIsEditing(false);
+  }, [categoriesWorking]);
 
-  const fileSrc = process.env.REACT_APP_ASSET_LOCATION + "/" + fileSelected.key;
+  if (!file) return <></>;
+
+  const fileSrc = process.env.REACT_APP_ASSET_LOCATION + "/" + file.key;
+  const FormComponent: React.ElementType = formMap.get(
+    file.category
+  ) as React.ElementType;
 
   return (
     <motion.div
@@ -43,6 +78,7 @@ export default function FileComponent() {
       exit={t.fade_out_right}
       transition={t.transition}
       className="h-full w-full flex flex-col"
+      key={file?.id}
     >
       <DeleteConfirmDialog
         dialogShown={deleteDialogShown}
@@ -50,7 +86,7 @@ export default function FileComponent() {
       />
       <div className="flex justify-between items-center">
         <div className="text-gray-300">
-          {moment(fileSelected.timestamp).format("MMMM Do YYYY, h:mm a")}
+          {moment(file.timestamp).format("MMMM Do YYYY, h:mm a")}
         </div>
         <div className="flex space-x-4 items-center">
           <TooltipProvider>
@@ -58,8 +94,10 @@ export default function FileComponent() {
               <TooltipTrigger className="w-full my-1">
                 <AnimatedButton
                   variant="custom"
+                  type="button"
                   className="w-full px-0 py-0"
                   onClick={() => copyText(fileSrc)}
+                  noRipple={true}
                 >
                   <Copy />
                 </AnimatedButton>
@@ -76,12 +114,36 @@ export default function FileComponent() {
                   variant="custom"
                   className="w-full px-0 py-0"
                   onClick={() => setIsEditing(!isEditing)}
+                  noRipple={true}
+                  type="button"
                 >
-                  <SquarePen />
+                  <AnimatePresence mode="wait">
+                    {isEditing ? (
+                      <motion.div
+                        transition={t.transition}
+                        initial={t.fade_out_scale_1}
+                        animate={t.normalize}
+                        exit={t.fade_out_scale_1}
+                        key="cancel"
+                      >
+                        <CircleX />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        transition={t.transition}
+                        initial={t.fade_out_scale_1}
+                        animate={t.normalize}
+                        exit={t.fade_out_scale_1}
+                        key="edit"
+                      >
+                        <SquarePen />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </AnimatedButton>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Edit</p>
+                <p>{isEditing ? "Cancel" : "Edit"}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -92,6 +154,8 @@ export default function FileComponent() {
                   variant="custom"
                   className="w-full px-0 py-0"
                   onClick={() => setDeleteDialogShown(true)}
+                  noRipple={true}
+                  type="button"
                 >
                   <Trash2 />
                 </AnimatedButton>
@@ -110,24 +174,13 @@ export default function FileComponent() {
             transition={t.transition}
             exit={t.fade_out_scale_1}
             animate={t.normalize}
-            initial={t.fade_out}
-            className="flex-1 overflow-x-hidden overflow-y-auto"
+            initial={t.fade_out_scale_1}
+            className="flex-1"
             key="isEditing"
           >
-            <div className="flex justify-end items-center space-x-4">
-              <AnimatedButton
-                variant="secondary"
-                onClick={() => setIsEditing(false)}
-              >
-                Save Changes
-              </AnimatedButton>
-              <AnimatedButton
-                variant="outline"
-                onClick={() => setIsEditing(false)}
-              >
-                Cancel
-              </AnimatedButton>
-            </div>
+            <AnimatePresence mode="wait">
+              <FormComponent key={file.category} fromEditPage={true} />
+            </AnimatePresence>
           </motion.div>
         ) : (
           <motion.div
@@ -135,11 +188,14 @@ export default function FileComponent() {
             exit={t.fade_out_scale_1}
             animate={t.normalize}
             initial={t.fade_out}
-            className="flex-1 overflow-x-hidden overflow-y-auto"
+            className="flex-1 overflow-x-hidden overflow-y-auto relative"
             key="isNotEditing"
           >
+            <div className="absolute h-full w-full flex items-center justify-center">
+              <Spinner hashColor="#eee" />
+            </div>
             <embed
-              className="h-full w-full"
+              className="h-full w-full absolute"
               type="application/pdf"
               src={fileSrc}
             />

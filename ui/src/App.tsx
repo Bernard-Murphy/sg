@@ -24,7 +24,7 @@ import testUser from "@/lib/testUser";
 import {
   createFormInitialValues,
   type CreateFormValues,
-} from "./lib/createTypes";
+} from "@/lib/createTypes";
 import {
   login_schema,
   register_schema,
@@ -34,6 +34,11 @@ import {
 } from "@/lib/validations";
 
 export type Category = "delinquency_notice" | "statement" | "receipt";
+export const categoryMap = new Map([
+  ["delinquency_notice", "Delinquency Notice"],
+  ["statement", "Statement"],
+  ["receipt", "Receipt"],
+]);
 
 const authHost = process.env.REACT_APP_AUTH_HOST;
 const api = process.env.REACT_APP_API_ROOT;
@@ -120,12 +125,11 @@ export default function App() {
   );
   const [initialized, setInitialized] = useState<boolean>(false);
   const [isSavingChanges, setIsSavingChanges] = useState<boolean>(false);
-
+  console.log(createFormValues);
   const authInit = () => {
     axios
       .get(authHost + "/init")
       .then((res) => {
-        console.log(res.data);
         if (!res?.data?.user) {
           console.log("response", res);
           throw "Unexpected response";
@@ -201,9 +205,10 @@ export default function App() {
 
   const submitCreateForm = async (e?: React.FormEvent) => {
     try {
+      console.log("submit");
       if (!user) return;
       if (e) e?.preventDefault();
-      console.log(createFormValues);
+      const isCreatePage = location.pathname === "/";
       const category = categorySelected;
       setCategoriesWorking([...categoriesWorking, category]);
       let response: any;
@@ -216,44 +221,60 @@ export default function App() {
               abortEarly: false,
             }
           );
-          response = await axios.post(api + "/files", {
-            category: "delinquency_notice",
-            values: createFormValues.delinquencyNoticeFormValues,
-          });
+          if (isCreatePage) {
+            response = await axios.post(api + "/files", {
+              category: "delinquency_notice",
+              values: createFormValues.delinquencyNoticeFormValues,
+            });
+          } else {
+            if (!fileSelected) return;
+            response = await axios.patch(api + "/files/" + fileSelected.id, {
+              category: "delinquency_notice",
+              values: createFormValues.delinquencyNoticeFormValues,
+            });
+          }
+
           newFile = response.data.file;
-          setCreateFormValues({
-            ...createFormInitialValues,
-            delinquencyNoticeFormValues:
-              createFormInitialValues.delinquencyNoticeFormValues,
-          });
+
           break;
         case "statement":
           statement_schema.validateSync(createFormValues.statementFormValues, {
             abortEarly: false,
           });
-          response = await axios.post(api + "/files", {
-            category: "statement",
-            values: createFormValues.statementFormValues,
-          });
+          if (isCreatePage) {
+            response = await axios.post(api + "/files", {
+              category: "statement",
+              values: createFormValues.statementFormValues,
+            });
+          } else {
+            if (!fileSelected) return;
+            response = await axios.patch(api + "/files/" + fileSelected.id, {
+              category: "statement",
+              values: createFormValues.statementFormValues,
+            });
+          }
+
           newFile = response.data.file;
-          setCreateFormValues({
-            ...createFormInitialValues,
-            statementFormValues: createFormInitialValues.statementFormValues,
-          });
           break;
         case "receipt":
+          console.log(createFormValues.receiptFormValues);
           receipt_schema.validateSync(createFormValues.receiptFormValues, {
             abortEarly: false,
           });
-          response = await axios.post(api + "/files", {
-            category: "receipt",
-            values: createFormValues.receiptFormValues,
-          });
+          if (isCreatePage) {
+            response = await axios.post(api + "/files", {
+              category: "receipt",
+              values: createFormValues.receiptFormValues,
+            });
+          } else {
+            if (!fileSelected) return;
+            response = await axios.patch(api + "/files/" + fileSelected.id, {
+              category: "receipt",
+              values: createFormValues.receiptFormValues,
+            });
+          }
+
           newFile = response.data.file;
-          setCreateFormValues({
-            ...createFormInitialValues,
-            receiptFormValues: createFormInitialValues.receiptFormValues,
-          });
           break;
         default:
           throw `OOB category ${category}`;
@@ -262,10 +283,26 @@ export default function App() {
         console.log(newFile, response);
         throw "Server did not return a file";
       }
-
+      toast.success(
+        `${categoryMap.get(newFile.category)} ${
+          isCreatePage ? "created" : "updated"
+        } successfully`
+      );
       setUser({
         ...user,
-        files: [newFile, ...user.files],
+        files: isCreatePage
+          ? [newFile, ...user.files]
+          : user.files.map((file) => {
+              let updatedFile =
+                file.id === newFile.id
+                  ? {
+                      ...newFile,
+                    }
+                  : {
+                      ...file,
+                    };
+              return updatedFile;
+            }),
       });
       setFileSelected(newFile);
       navigate("/files");
@@ -291,14 +328,16 @@ export default function App() {
     const deleteId = fileSelected.id;
     setFilesDeleting([...filesDeleting, deleteId]);
     try {
-      const response = await axios.delete(api + "/files/" + deleteId);
-      console.log(response);
-
+      await axios.delete(api + "/files/" + deleteId);
+      toast.success(
+        `${categoryMap.get(fileSelected.category)} deleted successfully`
+      );
       setFileSelected(null);
       setUser({
         ...user,
         files: user.files.filter((file) => file.id !== deleteId),
       });
+      setCreateFormValues(createFormInitialValues);
     } catch (err: any) {
       toast.error(
         err?.inner
@@ -310,7 +349,6 @@ export default function App() {
         }
       );
     }
-    setFilesDeleting(filesDeleting.filter((file) => file !== deleteId));
   };
 
   return (
@@ -339,14 +377,15 @@ export default function App() {
         setIsSavingChanges,
       }}
     >
-      <div className="h-screen transition-colors duration-300 bg-gray-900 text-white">
+      <div className="h-screen transition-colors duration-300 bg-gray-900 text-white relative">
+        <div className="fixed bottom-5 left-5">{window.innerWidth}</div>
         {!initialized ? (
           <div className="h-full w-full flex justify-center items-center">
             <Spinner />
           </div>
         ) : (
           <>
-            <div className="h-full overflow-hidden flex flex-col">
+            <div className="h-full overflow-y-hidden flex flex-col">
               <AnimatePresence mode="wait">
                 {user && (
                   <motion.div

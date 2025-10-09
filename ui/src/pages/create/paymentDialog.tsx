@@ -67,12 +67,13 @@ export default function PaymentDialog({
           <label className="block text-sm font-medium mb-2">Payment Type</label>
           <Select
             value={payment.payType}
-            onValueChange={(e: PayType) =>
-              setPayment({
-                ...payment,
-                payType: e,
-              })
-            }
+            onValueChange={(e: PayType) => {
+              if (e)
+                setPayment({
+                  ...payment,
+                  payType: e,
+                });
+            }}
           >
             <SelectTrigger className="w-full capitalize">
               <SelectValue placeholder="Select" className="text-white" />
@@ -129,6 +130,7 @@ export default function PaymentDialog({
             <AnimatedButton
               onClick={() => setModalShown(false)}
               variant="secondary"
+              type="button"
             >
               Close
             </AnimatedButton>

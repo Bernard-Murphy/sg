@@ -6,6 +6,12 @@ import AnimatedButton from "@/components/animated-button";
 import iconMap from "@/lib/iconMap";
 import { abbreviatedText } from "@/lib/methods";
 import moment from "moment";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 export default function FileList() {
   const { user, fileSelected, setFileSelected } = useApp();
@@ -16,7 +22,7 @@ export default function FileList() {
       exit={t.fade_out_left}
       animate={t.normalize}
       initial={t.fade_out_left}
-      className="w-1/4 overflow-x-hidden scrollbar-hidden"
+      className="w-1/4 scrollbar-hidden"
     >
       {user?.files
         .sort(
@@ -27,6 +33,7 @@ export default function FileList() {
           return (
             <div key={file.key}>
               <AnimatedButton
+                type="button"
                 onClick={() =>
                   setFileSelected({
                     ...file,
@@ -39,10 +46,26 @@ export default function FileList() {
                     : "text-gray-300 hover:text-white hover:bg-white/10"
                 }`}
               >
-                {iconMap.get(file.category)}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      {iconMap.get(file.category)}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="capitalize">
+                        {file.category.replace("_", " ")}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
                 <span className="profile-menu-item-text">
                   {abbreviatedText(
-                    moment(file.timestamp).format("MMMM Do YYYY, h:mm a"),
+                    moment(file.timestamp).format(
+                      window.innerWidth > 1024
+                        ? "MMMM Do YYYY, h:mm a"
+                        : "MMMM Do YYYY"
+                    ),
                     25
                   )}
                 </span>

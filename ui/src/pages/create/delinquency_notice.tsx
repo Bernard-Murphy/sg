@@ -6,13 +6,7 @@ import DatePicker from "@/components/datepicker";
 import AnimatedButton from "@/components/animated-button";
 import Spinner from "@/components/ui/spinner";
 
-export interface DelinquencyNoticeFormProps {
-  fromEditPage?: boolean;
-}
-
-export default function DelinquencyNoticeForm({
-  fromEditPage,
-}: DelinquencyNoticeFormProps) {
+export default function DelinquencyNoticeForm() {
   const {
     createFormValues,
     setCreateFormValues,
@@ -52,6 +46,24 @@ export default function DelinquencyNoticeForm({
       <motion.div
         transition={t.transition}
         initial={{
+          y: 20,
+          opacity: 0,
+        }}
+        animate={t.normalize}
+        exit={{
+          y: 20,
+          opacity: 0,
+        }}
+        className="mt-8 mb-6"
+      >
+        <p className="font-bold text-xl mb-2 sm:hidden text-center capitalize">
+          Delinquency Notice
+        </p>
+        <hr className="sm:hidden" />
+      </motion.div>
+      <motion.div
+        transition={t.transition}
+        initial={{
           y: 40,
           opacity: 0,
         }}
@@ -60,7 +72,7 @@ export default function DelinquencyNoticeForm({
           y: 40,
           opacity: 0,
         }}
-        className="mt-8"
+        className="mt-4 sm:mt-8"
       >
         <label className="block text-sm font-medium mb-2">
           Property Full Address
@@ -125,7 +137,11 @@ export default function DelinquencyNoticeForm({
         }}
         className="mt-4"
       >
-        <AnimatedButton disabled={working} type="submit">
+        <AnimatedButton
+          disabled={working}
+          type="submit"
+          className="w-full sm:w-auto"
+        >
           <AnimatePresence mode="wait">
             {working ? (
               <motion.div

@@ -9,6 +9,7 @@ interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
   className?: string;
   id?: string;
+  noRipple?: boolean;
   variant?:
     | "primary"
     | "secondary"
@@ -43,6 +44,7 @@ export default function AnimatedButton({
   type = "button",
   disabled = false,
   className = "",
+  noRipple,
   variant = "primary",
   ...props
 }: AnimatedButtonProps) {
@@ -86,21 +88,22 @@ export default function AnimatedButton({
       {...props}
     >
       {children}
-      {ripples.map((ripple) => (
-        <motion.span
-          key={ripple.id}
-          className="absolute bg-white/30 rounded-full pointer-events-none"
-          style={{
-            left: ripple.x - 10,
-            top: ripple.y - 10,
-            width: 20,
-            height: 20,
-          }}
-          initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 15, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        />
-      ))}
+      {!noRipple &&
+        ripples.map((ripple) => (
+          <motion.span
+            key={ripple.id}
+            className="absolute bg-white/30 rounded-full pointer-events-none"
+            style={{
+              left: ripple.x - 10,
+              top: ripple.y - 10,
+              width: 20,
+              height: 20,
+            }}
+            initial={{ scale: 0, opacity: 1 }}
+            animate={{ scale: 15, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        ))}
     </button>
   );
 }

@@ -20,7 +20,9 @@ const delinquency_notice = ({
 const statement = ({ propertyFullAddress, payments, balance }) => `
   <h1 class="text-center display-6">STATEMENT</h1>
   <hr />
-  <p class="fw-bold">${propertyFullAddress}</p>
+  <p>Property Address: <span class="fw-bold">${propertyFullAddress}</span/></p>
+  <h5 class="text-center m-0">Payments</h5>
+  <hr />
   <ul class="list-group list-group-flush">
     ${payments.map(
       ({ payDate, payAmount, payType }) => `

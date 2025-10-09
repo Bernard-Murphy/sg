@@ -1,3 +1,13 @@
+import DelinquencyNoticeForm from "@/pages/create/delinquency_notice";
+import ReceiptForm from "@/pages/create/receipt";
+import StatementForm from "@/pages/create/statement";
+
+export const formMap = new Map([
+  ["delinquency_notice", DelinquencyNoticeForm],
+  ["receipt", ReceiptForm],
+  ["statement", StatementForm],
+]);
+
 export interface DelinquencyNoticeFormValues {
   propertyFullAddress: string;
   loanAmount: number;
@@ -28,6 +38,12 @@ export interface ReceiptFormValues {
   payAmount: number;
   payType: PayType;
 }
+
+export const categoryFormMap = new Map([
+  ["delinquency_notice", "delinquencyNoticeFormValues"],
+  ["statement", "statementFormValues"],
+  ["receipt", "receiptFormValues"],
+]);
 
 export interface CreateFormValues {
   delinquencyNoticeFormValues: DelinquencyNoticeFormValues;

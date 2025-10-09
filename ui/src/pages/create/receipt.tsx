@@ -17,11 +17,7 @@ import {
 import AnimatedButton from "@/components/animated-button";
 import Spinner from "@/components/ui/spinner";
 
-export interface ReceiptFormProps {
-  fromEditPage?: boolean;
-}
-
-export default function ReceiptForm({ fromEditPage }: ReceiptFormProps) {
+export default function ReceiptForm() {
   const {
     createFormValues,
     setCreateFormValues,
@@ -63,14 +59,16 @@ export default function ReceiptForm({ fromEditPage }: ReceiptFormProps) {
           <label className="block text-sm font-medium mb-2">Payment Type</label>
           <Select
             value={r.payType}
-            onValueChange={(e: string) =>
-              handleChange({
-                target: {
-                  name: "payType",
-                  value: e,
-                },
-              } as React.ChangeEvent<HTMLInputElement>)
-            }
+            onValueChange={(e: string) => {
+              console.log("value change", e);
+              if (e)
+                handleChange({
+                  target: {
+                    name: "payType",
+                    value: e,
+                  },
+                } as React.ChangeEvent<HTMLInputElement>);
+            }}
           >
             <SelectTrigger className="w-full capitalize">
               <SelectValue placeholder="Select" className="text-white" />

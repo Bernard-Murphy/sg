@@ -15,11 +15,7 @@ import PaymentDialog from "./paymentDialog";
 import { dolHR } from "@/lib/methods";
 import Spinner from "@/components/ui/spinner";
 
-export interface StatementFormProps {
-  fromEditPage?: boolean;
-}
-
-export default function StatementForm({ fromEditPage }: StatementFormProps) {
+export default function StatementForm() {
   const [paymentSelected, setPaymentSelected] = useState<LoanPayment | null>(
     null
   );
@@ -141,6 +137,46 @@ export default function StatementForm({ fromEditPage }: StatementFormProps) {
 
   const working = categoriesWorking.includes("statement");
 
+  function SubmitButton() {
+    return (
+      <div className="mt-4">
+        <AnimatedButton
+          disabled={working}
+          type="submit"
+          className="w-full sm:w-auto"
+        >
+          <AnimatePresence mode="wait">
+            {working ? (
+              <motion.div
+                transition={t.transition}
+                exit={t.fade_out_scale_1}
+                animate={t.normalize}
+                initial={t.fade_out}
+                key="working"
+                className="flex items-center justify-center"
+              >
+                <Spinner size="sm" className="mr-2" />
+                Working
+              </motion.div>
+            ) : (
+              <motion.div
+                transition={t.transition}
+                exit={t.fade_out_scale_1}
+                animate={t.normalize}
+                initial={t.fade_out}
+                key="not-working"
+              >
+                Submit
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </AnimatedButton>
+      </div>
+    );
+  }
+
+  const motionAxis: "x" | "y" = window.innerWidth > 640 ? "x" : "y";
+
   return (
     <form onSubmit={submitCreateForm}>
       <PaymentDialog
@@ -150,16 +186,34 @@ export default function StatementForm({ fromEditPage }: StatementFormProps) {
         save={savePayment}
         remove={removePayment}
       />
-      <div className="mt-8 flex justify-between space-x-5">
+      <div className="mt-8 flex flex-1 flex-col sm:flex-row sm:justify-between space-x-5 overflow-x-hidden sm:overflow-x-auto">
         <motion.div
           transition={t.transition}
           initial={{
-            x: -40,
+            y: -20,
             opacity: 0,
           }}
           animate={t.normalize}
           exit={{
-            x: -40,
+            y: -20,
+            opacity: 0,
+          }}
+          className="mb-6"
+        >
+          <p className="font-bold text-xl mb-2 sm:hidden text-center capitalize">
+            Statement
+          </p>
+          <hr className="sm:hidden" />
+        </motion.div>
+        <motion.div
+          transition={t.transition}
+          initial={{
+            [motionAxis]: -40,
+            opacity: 0,
+          }}
+          animate={t.normalize}
+          exit={{
+            [motionAxis]: -40,
             opacity: 0,
           }}
           className="flex-1"
@@ -190,45 +244,20 @@ export default function StatementForm({ fromEditPage }: StatementFormProps) {
               className="w-full px-4 py-3 bg-black/20 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
             />
           </div>
-          <div className="mt-4">
-            <AnimatedButton disabled={working} type="submit">
-              <AnimatePresence mode="wait">
-                {working ? (
-                  <motion.div
-                    transition={t.transition}
-                    exit={t.fade_out_scale_1}
-                    animate={t.normalize}
-                    initial={t.fade_out}
-                    key="working"
-                    className="flex items-center justify-center"
-                  >
-                    <Spinner size="sm" className="mr-2" />
-                    Working
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    transition={t.transition}
-                    exit={t.fade_out_scale_1}
-                    animate={t.normalize}
-                    initial={t.fade_out}
-                    key="not-working"
-                  >
-                    Submit
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </AnimatedButton>
+          <div className="hidden sm:block">
+            <SubmitButton />
           </div>
+          <hr className="block sm:hidden my-4" />
         </motion.div>
         <motion.div
           transition={t.transition}
           initial={{
-            x: 40,
+            [motionAxis]: 40,
             opacity: 0,
           }}
           animate={t.normalize}
           exit={{
-            x: 40,
+            [motionAxis]: 40,
             opacity: 0,
           }}
           className="flex-1"
@@ -263,11 +292,12 @@ export default function StatementForm({ fromEditPage }: StatementFormProps) {
                         })
                       }
                       variant="custom"
-                      className={`flex justify-between items-center w-full text-left px-4 py-3 rounded-lg cursor-pointer ${
+                      className={`flex justify-between w-full text-left px-4 py-3 rounded-lg cursor-pointer ${
                         paymentSelected?.key === payment.key
                           ? "bg-blue-900 text-white"
                           : "text-gray-300 hover:text-white hover:bg-white/10"
                       }`}
+                      type="button"
                     >
                       <div className="flex-1">
                         <p className="font-bold">{dolHR(payment.payAmount)}</p>
@@ -285,6 +315,9 @@ export default function StatementForm({ fromEditPage }: StatementFormProps) {
                 No payments found
               </h5>
             )}
+          </div>
+          <div className="block sm:hidden">
+            <SubmitButton />
           </div>
         </motion.div>
       </div>
