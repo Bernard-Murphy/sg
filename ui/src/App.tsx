@@ -81,6 +81,7 @@ interface AppContextType {
   deleteFile: () => void;
   isSavingChanges: boolean;
   setIsSavingChanges: (option: boolean) => void;
+  screenWidth: number;
 }
 
 const blankLoginValues: LoginFormValues = {
@@ -125,7 +126,8 @@ export default function App() {
   );
   const [initialized, setInitialized] = useState<boolean>(false);
   const [isSavingChanges, setIsSavingChanges] = useState<boolean>(false);
-  console.log(createFormValues);
+  const [screenWidth, setScreenWidth] = useState<number>(window.innerWidth);
+
   const authInit = () => {
     axios
       .get(authHost + "/init")
@@ -152,6 +154,9 @@ export default function App() {
 
   useEffect(() => {
     authInit();
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -332,6 +337,7 @@ export default function App() {
       toast.success(
         `${categoryMap.get(fileSelected.category)} deleted successfully`
       );
+
       setFileSelected(null);
       setUser({
         ...user,
@@ -375,17 +381,17 @@ export default function App() {
         deleteFile,
         isSavingChanges,
         setIsSavingChanges,
+        screenWidth,
       }}
     >
       <div className="h-screen transition-colors duration-300 bg-gray-900 text-white relative">
-        <div className="fixed bottom-5 left-5">{window.innerWidth}</div>
         {!initialized ? (
           <div className="h-full w-full flex justify-center items-center">
             <Spinner />
           </div>
         ) : (
           <>
-            <div className="h-full overflow-y-hidden flex flex-col">
+            <div className="h-full overflow-clip flex flex-col">
               <AnimatePresence mode="wait">
                 {user && (
                   <motion.div
@@ -400,7 +406,7 @@ export default function App() {
                       height: 0,
                     }}
                     key={user?.id}
-                    className="overflow-hidden"
+                    className="overflow-y-hidden"
                   >
                     <Navbar />
                   </motion.div>

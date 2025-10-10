@@ -34,8 +34,7 @@ export default function FileComponent() {
   const [file, setFile] = useState<UserFile | null>(fileSelected);
 
   useEffect(() => {
-    if (!fileSelected) setDeleteDialogShown(false);
-    else {
+    if (fileSelected) {
       const thisFile = {
         ...fileSelected,
       };
@@ -61,6 +60,10 @@ export default function FileComponent() {
   }, []);
 
   useEffect(() => {
+    if (!fileSelected) setDeleteDialogShown(false);
+  }, [fileSelected?.id]);
+
+  useEffect(() => {
     if (!categoriesWorking.length) setIsEditing(false);
   }, [categoriesWorking]);
 
@@ -84,7 +87,7 @@ export default function FileComponent() {
         dialogShown={deleteDialogShown}
         setDialogShown={setDeleteDialogShown}
       />
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col-reverse sm:flex-row justify-between items-end sm:items-center w-full">
         <div className="text-gray-300">
           {moment(file.timestamp).format("MMMM Do YYYY, h:mm a")}
         </div>
@@ -188,7 +191,7 @@ export default function FileComponent() {
             exit={t.fade_out_scale_1}
             animate={t.normalize}
             initial={t.fade_out}
-            className="flex-1 overflow-x-hidden overflow-y-auto relative"
+            className="flex-1 overflow-clip relative w-full"
             key="isNotEditing"
           >
             <div className="absolute h-full w-full flex items-center justify-center">

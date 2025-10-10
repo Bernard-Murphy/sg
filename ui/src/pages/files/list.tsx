@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 
 export default function FileList() {
-  const { user, fileSelected, setFileSelected } = useApp();
+  const { user, fileSelected, setFileSelected, screenWidth } = useApp();
 
   return (
     <motion.div
@@ -40,7 +40,7 @@ export default function FileList() {
                   })
                 }
                 variant="custom"
-                className={`flex items-center w-full text-left px-4 py-3 rounded-lg cursor-pointer space-x-2 ${
+                className={`flex flex-col sm:flex-row items-center w-full sm:text-left px-4 py-3 rounded-lg cursor-pointer sm:space-x-2 ${
                   fileSelected?.key === file.key
                     ? "bg-blue-600 text-white"
                     : "text-gray-300 hover:text-white hover:bg-white/10"
@@ -48,7 +48,7 @@ export default function FileList() {
               >
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger className="mb-2 sm:mb-0">
                       {iconMap.get(file.category)}
                     </TooltipTrigger>
                     <TooltipContent>
@@ -59,12 +59,14 @@ export default function FileList() {
                   </Tooltip>
                 </TooltipProvider>
 
-                <span className="profile-menu-item-text">
+                <span>
                   {abbreviatedText(
                     moment(file.timestamp).format(
-                      window.innerWidth > 1024
+                      screenWidth > 1024
                         ? "MMMM Do YYYY, h:mm a"
-                        : "MMMM Do YYYY"
+                        : screenWidth > 640
+                        ? "MMMM Do YYYY"
+                        : "l"
                     ),
                     25
                   )}

@@ -54,14 +54,17 @@ export default function DeleteConfirmDialog({
                   Are you sure?
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-white">
-                  This action cannot be undone.
+                  This will permanently delete the document
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel onClick={() => setDialogShown(false)}>
                   Cancel
                 </AlertDialogCancel>
-                <AlertDialogAction onClick={deleteFile}>
+                <AlertDialogAction
+                  className="my-4 sm:my-0 bg-red-700"
+                  onClick={deleteFile}
+                >
                   Continue
                 </AlertDialogAction>
               </AlertDialogFooter>

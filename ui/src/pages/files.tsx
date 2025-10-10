@@ -20,7 +20,7 @@ export default function FilesPage({}: FilesPageProps) {
       exit={t.fade_out_scale_1}
       animate={t.normalize}
       initial={t.fade_out_scale_1}
-      className="container mx-auto px-4 py-8 h-full flex-1 flex overflow-hidden"
+      className="container mx-auto px-2 sm:px-6 pt-8 pb-4 sm:py-8 flex-1 h-full flex overflow-clip"
     >
       <AnimatePresence mode="wait">
         {!user?.files.length ? (

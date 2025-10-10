@@ -24,6 +24,7 @@ export default function StatementForm() {
     setCreateFormValues,
     submitCreateForm,
     categoriesWorking,
+    screenWidth,
   } = useApp();
   const s: StatementFormValues = createFormValues.statementFormValues;
 
@@ -144,6 +145,7 @@ export default function StatementForm() {
           disabled={working}
           type="submit"
           className="w-full sm:w-auto"
+          variant="success"
         >
           <AnimatePresence mode="wait">
             {working ? (
@@ -175,7 +177,7 @@ export default function StatementForm() {
     );
   }
 
-  const motionAxis: "x" | "y" = window.innerWidth > 640 ? "x" : "y";
+  const motionAxis: "x" | "y" = screenWidth > 640 ? "x" : "y";
 
   return (
     <form onSubmit={submitCreateForm}>
@@ -186,7 +188,7 @@ export default function StatementForm() {
         save={savePayment}
         remove={removePayment}
       />
-      <div className="mt-8 flex flex-1 flex-col sm:flex-row sm:justify-between space-x-5 overflow-x-hidden sm:overflow-x-auto">
+      <div className="mt-8 flex flex-1 flex-col sm:flex-row sm:justify-between space-x-5 overflow-visible">
         <motion.div
           transition={t.transition}
           initial={{
@@ -198,7 +200,7 @@ export default function StatementForm() {
             y: -20,
             opacity: 0,
           }}
-          className="mb-6"
+          className="mb-6 w-full sm:w-auto"
         >
           <p className="font-bold text-xl mb-2 sm:hidden text-center capitalize">
             Statement
@@ -216,7 +218,7 @@ export default function StatementForm() {
             [motionAxis]: -40,
             opacity: 0,
           }}
-          className="flex-1"
+          className="flex-1 w-full w-auto"
         >
           <div>
             <label className="block text-sm font-medium mb-2">
@@ -247,7 +249,7 @@ export default function StatementForm() {
           <div className="hidden sm:block">
             <SubmitButton />
           </div>
-          <hr className="block sm:hidden my-4" />
+          <hr className="block sm:hidden my-8 w-full" />
         </motion.div>
         <motion.div
           transition={t.transition}
@@ -263,15 +265,16 @@ export default function StatementForm() {
           className="flex-1"
         >
           <div>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-start sm:items-center mb-4">
               <h4 className="text-2xl font-bold">Payments</h4>
               <AnimatedButton
                 disabled={working}
                 onClick={newPayment}
                 className="flex justify-between items-center"
               >
-                <Plus className="mr-2" />
-                <span>New</span>
+                <Plus />
+                {/* <Plus className="mr-2" />
+                <span>New</span> */}
               </AnimatedButton>
             </div>
             {payments.length ? (
@@ -311,12 +314,12 @@ export default function StatementForm() {
                 );
               })
             ) : (
-              <h5 className="font-bold text-center text-xl mt-16">
+              <h5 className="font-bold text-center text-xl my-8 sm:mt-16">
                 No payments found
               </h5>
             )}
           </div>
-          <div className="block sm:hidden">
+          <div className="block sm:hidden mt-5">
             <SubmitButton />
           </div>
         </motion.div>

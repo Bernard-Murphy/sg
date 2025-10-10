@@ -14,12 +14,26 @@ const {
 const { v4: uuid } = require("uuid");
 const { normalizeEventBody } = require("../utils/methods");
 
+/**
+ * POST /files
+ *
+ * body:
+ * * category: "delinquency_notice" | "statement" | "receipt"
+ * * values: DelinquencyNoticeFormValues | StatementFormValues | ReceiptFormValues *See: /ui/src/lib/createTypes
+ *
+ * Generates html from template and supplied values
+ * Generates PDF using puppeteer then writes to S3
+ * Inserts file data into DynamoDB
+ * Returns the file object
+ *
+ */
 const files_post = async (event, context, cb) => {
   event.body = normalizeEventBody(event.body);
   const { category, values } = event.body;
 
   try {
     let html;
+    // HTML
     switch (category) {
       case "delinquency_notice":
         delinquency_notice_schema.validateSync(values);
@@ -73,10 +87,24 @@ const files_post = async (event, context, cb) => {
   }
 };
 
+/**
+ * PATCH /files/{patchId}
+ *
+ * body:
+ * * category: "delinquency_notice" | "statement" | "receipt"
+ * * values: DelinquencyNoticeFormValues | StatementFormValues | ReceiptFormValues *See: ui/src/lib/createTypes
+ *
+ * Generates html from template and supplied values
+ * Generates PDF using puppeteer then writes to S3
+ * Updates DynamoDB entry
+ * Returns the updated file object
+ *
+ * Does not delete the old file
+ */
+
 const files_patch = async (event, context, cb) => {
   event.body = normalizeEventBody(event.body);
   const { category, values } = event.body;
-  console.log("files_patch", event.body);
 
   try {
     let html;
@@ -133,6 +161,12 @@ const files_patch = async (event, context, cb) => {
   }
 };
 
+/**
+ * DELETE /files/{patchId}
+ *
+ * Deletes the file from S3
+ * Deletes the file from Dynamo
+ */
 const files_delete = async (event, context, cb) => {
   const deleteId = event.pathParameters.deleteId;
   try {

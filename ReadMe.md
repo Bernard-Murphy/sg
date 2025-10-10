@@ -18,5 +18,4 @@ TO DO:
 
 - backend authentication
 - deployments
-- media queries
 - documentation/loom video

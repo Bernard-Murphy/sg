@@ -13,6 +13,18 @@ const filesTable = process.env.DYNAMO_FILES_TABLE;
 const client = new DynamoDBClient({});
 const s3 = new S3Client({});
 
+/**
+ * Upserts a file
+ *
+ * id: string
+ * userId: string
+ * category: "delinquency_notice" | "statement" | "receipt"
+ * key: string
+ * formValues: DelinquencyNoticeFormValues | StatementFormValues | ReceiptFormValues *See: /ui/src/lib/createTypes
+ *
+ * Returns the dynamo entry
+ */
+
 const putFile = async ({ id, userId, category, key, formValues }) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -40,6 +52,14 @@ const putFile = async ({ id, userId, category, key, formValues }) =>
     }
   });
 
+/**
+ * Fetches a list of files with the supplied userId
+ *
+ * * userId: string;
+ *
+ * Returns the files
+ */
+
 const getFilesByUserId = (userId) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -59,6 +79,14 @@ const getFilesByUserId = (userId) =>
       reject(err);
     }
   });
+
+/**
+ * Deletes the dynamo entry identified by the supplied fileId
+ * Deletes the s3 object with the supplied key
+ *
+ * * fileId: string;
+ * * Key: string;
+ */
 
 const deleteFile = (fileId, Key) =>
   new Promise(async (resolve, reject) => {
@@ -83,6 +111,10 @@ const deleteFile = (fileId, Key) =>
       reject(err);
     }
   });
+
+/**
+ * Fetches the dynamo entry identified by the supplied fileId
+ */
 
 const getFile = (fileId) =>
   new Promise(async (resolve, reject) => {

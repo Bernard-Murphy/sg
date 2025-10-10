@@ -41,7 +41,7 @@ export default function ReceiptForm() {
   const working = categoriesWorking.includes("receipt");
 
   return (
-    <form onSubmit={submitCreateForm}>
+    <form onSubmit={submitCreateForm} className="w-full">
       <motion.div
         transition={t.transition}
         initial={{
@@ -53,7 +53,7 @@ export default function ReceiptForm() {
           y: 40,
           opacity: 0,
         }}
-        className="mt-8 flex justify-between items-center space-x-2"
+        className="mt-8 flex flex-col sm:flex-row justify-between sm:items-center sm:space-x-2 w-full"
       >
         <div className="flex-1">
           <label className="block text-sm font-medium mb-2">Payment Type</label>
@@ -88,7 +88,7 @@ export default function ReceiptForm() {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 mt-8 sm:mt-0">
           <label className="block text-sm font-medium mb-2">
             Loan Amount ($)
           </label>
@@ -138,7 +138,12 @@ export default function ReceiptForm() {
         }}
         className="mt-4 flex justify-between items-center space-x-2"
       >
-        <AnimatedButton disabled={working} type="submit">
+        <AnimatedButton
+          className="w-full sm:w-auto"
+          variant="success"
+          disabled={working}
+          type="submit"
+        >
           <AnimatePresence mode="wait">
             {working ? (
               <motion.div

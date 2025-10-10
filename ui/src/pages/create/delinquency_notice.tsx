@@ -97,9 +97,9 @@ export default function DelinquencyNoticeForm() {
           y: 60,
           opacity: 0,
         }}
-        className="mt-4 flex justify-between items-center space-x-2"
+        className="mt-4 flex flex-col sm:flex-row sm:justify-between sm:items-center sm:space-x-2"
       >
-        <div className="flex-1">
+        <div className="sm:flex-1 w-full sm:w-auto">
           <label className="block text-sm font-medium mb-2">
             Delinquency Date
           </label>
@@ -110,7 +110,7 @@ export default function DelinquencyNoticeForm() {
             buttonClasses="w-full"
           />
         </div>
-        <div className="flex-1">
+        <div className="sm:flex-1 w-full sm:w-auto mt-6 sm:mt-0">
           <label className="block text-sm font-medium mb-2">
             Loan Amount ($)
           </label>
@@ -135,12 +135,13 @@ export default function DelinquencyNoticeForm() {
           y: 80,
           opacity: 0,
         }}
-        className="mt-4"
+        className="mt-6 sm:mt-4"
       >
         <AnimatedButton
           disabled={working}
           type="submit"
           className="w-full sm:w-auto"
+          variant="success"
         >
           <AnimatePresence mode="wait">
             {working ? (

@@ -111,8 +111,8 @@ export default function PaymentDialog({
             className="w-full px-4 py-3 bg-black/20 border border-gray-600 rounded-lg focus:border-blue-500 focus:outline-none"
           />
         </div>
-        <DialogFooter className="flex justify-between items-center">
-          <div className="flex-1">
+        <DialogFooter className="flex flex-row justify-between items-center">
+          <div>
             {!payment?.new && payment?.modalShown && (
               <AnimatedButton
                 variant="destructive"
@@ -123,8 +123,8 @@ export default function PaymentDialog({
               </AnimatedButton>
             )}
           </div>
-          <div className="flex justify-between items-center space-x-2">
-            <AnimatedButton variant="success" type="button" onClick={save}>
+          <div className="flex flex-1 justify-end items-center space-x-2">
+            <AnimatedButton type="button" onClick={save}>
               Save
             </AnimatedButton>
             <AnimatedButton

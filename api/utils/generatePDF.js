@@ -13,6 +13,17 @@ const assetUrl = process.env.ASSET_URL;
 
 const s3 = new S3Client({});
 
+/**
+ * Generates a PDF using puppeteer with the supplied html and pdf options
+ * Name of time will be the md5 of the html and ISODate of the time that the hash is generated
+ *
+ * * html: string
+ * * options: PDFOptions - https://pptr.dev/api/puppeteer.pdfoptions
+ *
+ * Returns Key of the inserted s3 object
+ *
+ */
+
 const generatePDF = async (html, options) => {
   if (!options) options = {};
   const browser = await puppeteer.launch({
