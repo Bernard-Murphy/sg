@@ -16,12 +16,9 @@ const s3 = new S3Client({});
 /**
  * Generates a PDF using puppeteer with the supplied html and pdf options
  * Name of time will be the md5 of the html and ISODate of the time that the hash is generated
- *
- * * html: string
- * * options: PDFOptions - https://pptr.dev/api/puppeteer.pdfoptions
- *
- * Returns Key of the inserted s3 object
- *
+ * @param {string} html
+ * @param {PDFOptions} options // https://pptr.dev/api/puppeteer.pdfoptions
+ * @returns Key of the inserted s3 object
  */
 
 const generatePDF = async (html, options) => {
@@ -81,15 +78,6 @@ const generatePDF = async (html, options) => {
       left: "1in",
     },
     ...options,
-    // timeout: 300000000,
-    // format: "A4",
-    // printBackground: true,
-    // margin: {
-    //   top: "1in",
-    //   right: "0.5in",
-    //   bottom: "1in",
-    //   left: "0.5in",
-    // },
   });
   browser.close();
   // fs.writeFileSync("/home/bernard/Documents/work/sg/test.pdf", data_uint8);

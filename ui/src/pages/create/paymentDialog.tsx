@@ -18,6 +18,12 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 
+/**
+ * Payment form dialog
+ * Used to add/edit/delete payments for the statement form
+ * Rendered on the create page and on the file page (edit form)
+ */
+
 export interface PaymentDialogProps {
   payment: LoanPayment | null;
   setPayment: (payment: LoanPayment) => void;

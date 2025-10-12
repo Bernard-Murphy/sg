@@ -8,6 +8,14 @@ import AnimatedButton from "./animated-button";
 import Spinner from "./ui/spinner";
 import axios from "axios";
 
+/**
+ * Navbar will only be displayed if the user is logged in
+ * On left will be the logo. Clicking this will take the user to the home page where documents can be generated
+ * On right, 2 buttons - User tooltip and logout
+ * Clicking the user tooltip will take the user to the files page, which lists the user's files, if any
+ * Clicking the Logout button will log the user out, hide the navbar, and navigate to the login page
+ */
+
 const api = process.env.REACT_APP_API;
 
 export default function Navbar() {

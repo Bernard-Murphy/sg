@@ -13,6 +13,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import Spinner from "@/components/ui/spinner";
 import { transitions as t } from "@/lib/utils";
 
+/**
+ * Alert dialog that prompts the user to confirm whether the user wants to delete a file
+ */
+
 export interface DeleteConfirmDialogProps {
   dialogShown: boolean;
   setDialogShown: (option: boolean) => void;

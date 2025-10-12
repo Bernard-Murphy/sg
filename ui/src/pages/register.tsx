@@ -6,7 +6,10 @@ import AnimatedButton from "@/components/animated-button";
 import { useApp } from "@/App";
 import Spinner from "@/components/ui/spinner";
 
-const api = process.env.REACT_APP_API;
+/**
+ * Register page
+ * Form values are stored in useApp(), so user can navigate away and come back without changes to the inputs
+ */
 
 export interface RegisterFormValues {
   username: string;

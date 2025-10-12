@@ -2,7 +2,9 @@ const moment = require("moment");
 const { dolHR } = require("./methods");
 
 /**
+ * These template functions return html that is used in the body of the generated PDF documents
  *
+ * See: /ui/src/lib/createTypes
  */
 
 const delinquency_notice = ({

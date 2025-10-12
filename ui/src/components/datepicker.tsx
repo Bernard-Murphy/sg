@@ -10,6 +10,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+/**
+ * Modified animated-button and popover with date select
+ */
+
 export interface DatepickerProps {
   date: Date | undefined;
   setDate: (d: Date) => void;

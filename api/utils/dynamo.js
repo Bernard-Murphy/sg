@@ -14,15 +14,15 @@ const client = new DynamoDBClient({});
 const s3 = new S3Client({});
 
 /**
- * Upserts a file
+ * Upserts a file entry to dynamo, and writes the file to s3.
+ * If it is updating an existing entry, the old file will still exist.
  *
- * id: string
- * userId: string
- * category: "delinquency_notice" | "statement" | "receipt"
- * key: string
- * formValues: DelinquencyNoticeFormValues | StatementFormValues | ReceiptFormValues *See: /ui/src/lib/createTypes
- *
- * Returns the dynamo entry
+ * @param {string} id
+ * @param {string} userId
+ * @param {"delinquency_notice" | "statement" | "receipt"} category
+ * @param {string} key // AWS s3 Key
+ * @param {DelinquencyNoticeFormValues | StatementFormValues | ReceiptFormValues} formValues // See: /ui/src/lib/createTypes
+ * @returns Dynamo entry
  */
 
 const putFile = async ({ id, userId, category, key, formValues }) =>
@@ -55,9 +55,8 @@ const putFile = async ({ id, userId, category, key, formValues }) =>
 /**
  * Fetches a list of files with the supplied userId
  *
- * * userId: string;
- *
- * Returns the files
+ * @param {string} userId
+ * @returns The list of files
  */
 
 const getFilesByUserId = (userId) =>
@@ -84,8 +83,9 @@ const getFilesByUserId = (userId) =>
  * Deletes the dynamo entry identified by the supplied fileId
  * Deletes the s3 object with the supplied key
  *
- * * fileId: string;
- * * Key: string;
+ * @param {*} fileId
+ * @param {*} Key
+ * @returns void
  */
 
 const deleteFile = (fileId, Key) =>
@@ -116,6 +116,12 @@ const deleteFile = (fileId, Key) =>
  * Fetches the dynamo entry identified by the supplied fileId
  */
 
+/**
+ *
+ * @param {string} fileId
+ * @returns dynamo entry
+ */
+
 const getFile = (fileId) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -128,7 +134,16 @@ const getFile = (fileId) =>
         })
       );
       if (!result.Item) throw `Not found - ${fileId}`;
-      resolve(result.Item);
+
+      const Item = {
+        id: id.S,
+        userId: userId.S,
+        category: category.S,
+        key: key.S,
+        timestamp: timestamp.S,
+        formValues: formValues.S,
+      };
+      resolve(Item);
     } catch (err) {
       console.log(err, "getFile error", err);
       reject(err);

@@ -1,5 +1,11 @@
 import { toast } from "sonner";
 
+/**
+ *
+ * @param string - String to copy
+ * @returns void
+ */
+
 export const copyText = (string: string) => {
   let textarea = document.createElement("textarea");
   let result;
@@ -45,16 +51,12 @@ export const copyText = (string: string) => {
   toast.success("Copied to clipboard");
 };
 
-export const getFileSize = (size: string | number) => {
-  size = Number(size);
-  const units = ["Bytes", "KB", "MB", "GB"];
-  let scale = 0;
-  while (size > 900 && scale < 3) {
-    size /= 1024;
-    scale++;
-  }
-  return Math.round(size * 100) / 100 + " " + units[scale];
-};
+/**
+ *
+ * @param text Text to abbreviate
+ * @param length Number of characters to show before appending an ellipsis (defaults to 75)
+ * @returns Abbreviated text
+ */
 
 export const abbreviatedText = (text: string, length?: number) => {
   text = String(text);
@@ -64,17 +66,19 @@ export const abbreviatedText = (text: string, length?: number) => {
 };
 
 /**
- * @param {String | Number} num - A number (i.e. 1000000)
- * @returns String - Number with commas appended (i.e. 1,000,000)
+ * @param {number | string} num - A number (i.e. 1000000)
+ * @returns String of num with commas appended (i.e. 1,000,000)
  */
 export const numberWithCommas = (num: number | string) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
+/**
+ *
+ * @param {number | string} n
+ * @returns
+ */
 export const dolHR = (n: number | string) => {
-  /**
-   * Returns human readable dollar amount from mongo value which is stored in pennies
-   */
   n = Number(n);
   n = n.toFixed(2);
   n = numberWithCommas(n);

@@ -8,6 +8,8 @@ import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 
+// https://ui.shadcn.com/docs/components/calendar
+
 function Calendar({
   className,
   classNames,

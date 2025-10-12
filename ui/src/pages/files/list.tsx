@@ -13,6 +13,12 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 
+/**
+ * Left side of the file page
+ * Lists all of the user's files
+ * Will not be rendered if the user has not created any files
+ */
+
 export default function FileList() {
   const { user, fileSelected, setFileSelected, screenWidth } = useApp();
 

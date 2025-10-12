@@ -9,9 +9,11 @@ import FileList from "./files/list";
 import FileComponent from "./files/file";
 import React from "react";
 
-export interface FilesPageProps {}
+/**
+ * Page that lists the user's files, if any, and allows the user to select/view/edit/delete files
+ */
 
-export default function FilesPage({}: FilesPageProps) {
+export default function FilesPage() {
   const { user, fileSelected } = useApp();
 
   return (

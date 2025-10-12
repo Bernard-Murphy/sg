@@ -2,6 +2,11 @@ import { type ButtonHTMLAttributes, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
+/**
+ * Animated button that I made
+ * When pressed, ripples will appear and the button will make a pressing animation
+ */
+
 interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   onClick?: () => void;
@@ -55,6 +60,15 @@ export default function AnimatedButton({
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (disabled) return;
+
+    /**
+     * Adds class to button when clicked which scales it down
+     * Removes the class after 150ms, giving the appearance of being pressed
+     *
+     * Adds expanding white ripple centered where the user clicked
+     * Button is relatively positioned and overflow is hidden
+     * Ripple is absolutely positioned
+     */
     setPressing(true);
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;

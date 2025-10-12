@@ -15,6 +15,11 @@ import PaymentDialog from "./paymentDialog";
 import { dolHR } from "@/lib/methods";
 import Spinner from "@/components/ui/spinner";
 
+/**
+ * Statement form
+ * Rendered on the create page and on the file page (edit form)
+ */
+
 export default function StatementForm() {
   const [paymentSelected, setPaymentSelected] = useState<LoanPayment | null>(
     null

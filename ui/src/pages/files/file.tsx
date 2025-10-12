@@ -22,6 +22,11 @@ import {
 } from "@/lib/createTypes";
 import Spinner from "@/components/ui/spinner";
 
+/**
+ * Right side of the files page when a file is selected
+ * 2 views - File PDF embed and the file edit form
+ */
+
 export default function FileComponent() {
   const {
     fileSelected,

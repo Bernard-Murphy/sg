@@ -9,6 +9,11 @@ import { useApp } from "@/App";
 import Spinner from "@/components/ui/spinner";
 import { UserRoundPlus } from "lucide-react";
 
+/**
+ * Login page
+ * Form values are stored in useApp(), so user can navigate away and come back without changes to the inputs
+ */
+
 export interface LoginFormValues {
   username: string;
   password: string;

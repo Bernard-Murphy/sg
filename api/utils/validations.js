@@ -1,5 +1,11 @@
 const y = require("yup");
 
+/**
+ * These functions are the yup validations for the request bodies of all the endpoints that have them.
+ *
+ * https://yup-docs.vercel.app/docs/intro
+ */
+
 const login_schema = y.object().shape({
   username: y
     .string()

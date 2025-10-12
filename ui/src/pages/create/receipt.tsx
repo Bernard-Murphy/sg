@@ -17,6 +17,11 @@ import {
 import AnimatedButton from "@/components/animated-button";
 import Spinner from "@/components/ui/spinner";
 
+/**
+ * Receipt form
+ * Rendered on the create page and on the file page (edit form)
+ */
+
 export default function ReceiptForm() {
   const {
     createFormValues,

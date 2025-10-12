@@ -33,6 +33,11 @@ import {
   receipt_schema,
 } from "@/lib/validations";
 
+/**
+ * Main app page
+ * Contains router and most of the app state
+ */
+
 export type Category = "delinquency_notice" | "statement" | "receipt";
 export const categoryMap = new Map([
   ["delinquency_notice", "Delinquency Notice"],

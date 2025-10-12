@@ -1,3 +1,11 @@
+/**
+ *
+ * @param {(Lambda event object).body} eventBody
+ *
+ * Lambda event bodies can occasionally differ based on what sls version you are using, and where it is deployed/whether you are running it locally
+ *
+ * @returns Event body formatted as JSON
+ */
 const normalizeEventBody = (eventBody) => {
   try {
     if (typeof eventBody === "object")
@@ -21,17 +29,20 @@ const normalizeEventBody = (eventBody) => {
 };
 
 /**
- * @param {String | Number} num - A number (i.e. 1000000)
- * @returns String - Number with commas appended (i.e. 1,000,000)
+ * @param {number | string} num - A number (i.e. 1000000)
+ * @returns String of num with commas appended (i.e. 1,000,000)
  */
 const numberWithCommas = (num) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
+/**
+ *
+ * @param {number | string} n
+ * @returns
+ */
+
 const dolHR = (n) => {
-  /**
-   * Returns human readable dollar amount from mongo value which is stored in pennies
-   */
   n = Number(n);
   n = n.toFixed(2);
   n = numberWithCommas(n);

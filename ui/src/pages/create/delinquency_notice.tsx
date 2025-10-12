@@ -6,6 +6,11 @@ import DatePicker from "@/components/datepicker";
 import AnimatedButton from "@/components/animated-button";
 import Spinner from "@/components/ui/spinner";
 
+/**
+ * Delinquency notice form
+ * Rendered on the create page and on the file page (edit form)
+ */
+
 export default function DelinquencyNoticeForm() {
   const {
     createFormValues,

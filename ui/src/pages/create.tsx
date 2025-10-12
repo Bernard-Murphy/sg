@@ -7,13 +7,14 @@ import AnimatedButton from "@/components/animated-button";
 import { useEffect } from "react";
 import { createFormInitialValues, formMap } from "@/lib/createTypes";
 
-export interface CreatePageProps {}
+/**
+ * Home page
+ * Inaccessible if the user is not logged in
+ * Contains all of the file creation forms
 
-export interface FileFormValues {}
+ */
 
-// const api = process.env.REACT_APP_API;
-
-export default function CreatePage({}: CreatePageProps) {
+export default function CreatePage() {
   const { categorySelected, setCategorySelected, setCreateFormValues } =
     useApp();
   const categories: Category[] = ["delinquency_notice", "statement", "receipt"];
