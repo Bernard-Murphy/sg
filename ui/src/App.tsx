@@ -113,11 +113,11 @@ export const useApp = () => {
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  // const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [fileSelected, setFileSelected] = useState<UserFile | null>(null);
   const [categoriesWorking, setCategoriesWorking] = useState<Category[]>([]);
   const [filesDeleting, setFilesDeleting] = useState<string[]>([]);
-  const [user, setUser] = useState<User | null>(testUser);
+  // const [user, setUser] = useState<User | null>(testUser);
   const [categorySelected, setCategorySelected] =
     useState<Category>("delinquency_notice");
   const [authWorking, setAuthWorking] = useState<boolean>(false);

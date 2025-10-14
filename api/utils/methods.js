@@ -13,10 +13,10 @@ const normalizeEventBody = (eventBody) => {
         ...eventBody,
       };
 
-    try {
-      eventBody = Buffer.from(eventBody, "base64").toString("utf-8");
-    } catch (err) {
+    if (!process.env.SLS_STAGE) {
       eventBody = JSON.parse(eventBody);
+    } else {
+      eventBody = Buffer.from(eventBody, "base64").toString("utf-8");
     }
 
     return {
