@@ -25,7 +25,12 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Authenticate Serverless
+        working-directory: api
+        run: npx serverless config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Install Dependencies
+        working-directory: api
         run: npm install
 
       - name: Deploy to Dev
