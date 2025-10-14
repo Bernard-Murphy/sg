@@ -38,6 +38,20 @@ plugins:
 package:
   excludeDevDependencies: false
 
+resources:
+  Resources:
+    FilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: sg-files-${opt:stage, 'dev'}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
 custom:
   serverless-offline:
     lambdaPort: ${opt:lambdaPort, 1336}
@@ -51,7 +65,7 @@ functions:
     timeout: 29
     events:
       - http:
-          path: /auth/init
+          path: ${opt:stage}/auth/init
           method: get
           cors: true
   auth_post_login:
