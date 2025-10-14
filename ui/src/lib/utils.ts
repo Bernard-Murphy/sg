@@ -5,6 +5,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Contains framer-motion transitions
+ *
+ * https://motion.dev/docs/react-motion-component
+ */
+
 export const transitions = {
   normalize: {
     opacity: 1,
@@ -88,13 +94,20 @@ export const transitions = {
     // y: { duration: 0.33 },
     // opacity: { duration: 0.25 },
     // scale: { duration: 0.26 },
-    x: { duration: 0.25 },
-    y: { duration: 0.25 },
-    opacity: { duration: 0.17 },
-    scale: { duration: 0.18 },
+    // height: { duration: 0.33 },
+    // x: { duration: 0.25 },
+    // y: { duration: 0.25 },
+    // opacity: { duration: 0.17 },
+    // scale: { duration: 0.18 },
+    height: { duration: 0.29 },
+    x: { duration: 0.22 },
+    y: { duration: 0.22 },
+    opacity: { duration: 0.14 },
+    scale: { duration: 0.15 },
   },
 
   transition_fast: {
+    height: { duration: 0.25 },
     x: { duration: 0.19 },
     y: { duration: 0.19 },
     opacity: { duration: 0.11 },

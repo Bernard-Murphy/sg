@@ -2,6 +2,11 @@ import { type ButtonHTMLAttributes, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
+/**
+ * Animated button that I made
+ * When pressed, ripples will appear and the button will make a pressing animation
+ */
+
 interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   onClick?: () => void;
@@ -9,6 +14,7 @@ interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   disabled?: boolean;
   className?: string;
   id?: string;
+  noRipple?: boolean;
   variant?:
     | "primary"
     | "secondary"
@@ -16,6 +22,7 @@ interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     | "outline"
     | "ghost"
     | "link"
+    | "success"
     | "custom";
 }
 
@@ -25,12 +32,14 @@ const variantClasses = {
   secondary:
     "bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-100 px-6 py-3 rounded-lg",
   destructive:
-    "bg-red-400 text-white hover:bg-red-500 disabled:bg-red-300 px-6 py-3 rounded-lg",
+    "bg-red-500 text-white hover:bg-red-600 disabled:bg-red-300 px-6 py-3 rounded-lg",
   outline:
     "bg-gray-700 text-white hover:bg-gray-700 disabled:bg-gray-500 px-6 py-3 rounded-lg",
   ghost:
     "text-white hover:bg-gray-700 disabled:bg-gray-500 px-6 py-3 rounded-lg",
   link: "text-white hover:bg-gray-700 disabled:bg-gray-500 px-6 py-3 rounded-lg",
+  success:
+    "bg-green-600 text-white hover:bg-green-700 disabled:bg-green-400 px-6 py-3 rounded-lg",
   custom: "",
 };
 
@@ -40,8 +49,8 @@ export default function AnimatedButton({
   type = "button",
   disabled = false,
   className = "",
+  noRipple,
   variant = "primary",
-  id = "test",
   ...props
 }: AnimatedButtonProps) {
   const [ripples, setRipples] = useState<
@@ -51,6 +60,15 @@ export default function AnimatedButton({
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (disabled) return;
+
+    /**
+     * Adds class to button when clicked which scales it down
+     * Removes the class after 150ms, giving the appearance of being pressed
+     *
+     * Adds expanding white ripple centered where the user clicked
+     * Button is relatively positioned and overflow is hidden
+     * Ripple is absolutely positioned
+     */
     setPressing(true);
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -74,7 +92,7 @@ export default function AnimatedButton({
 
   return (
     <button
-      id={id}
+      // id={id}
       type={type}
       disabled={disabled}
       onClick={handleClick}
@@ -84,21 +102,22 @@ export default function AnimatedButton({
       {...props}
     >
       {children}
-      {ripples.map((ripple) => (
-        <motion.span
-          key={ripple.id}
-          className="absolute bg-white/30 rounded-full pointer-events-none"
-          style={{
-            left: ripple.x - 10,
-            top: ripple.y - 10,
-            width: 20,
-            height: 20,
-          }}
-          initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 15, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        />
-      ))}
+      {!noRipple &&
+        ripples.map((ripple) => (
+          <motion.span
+            key={ripple.id}
+            className="absolute bg-white/30 rounded-full pointer-events-none"
+            style={{
+              left: ripple.x - 10,
+              top: ripple.y - 10,
+              width: 20,
+              height: 20,
+            }}
+            initial={{ scale: 0, opacity: 1 }}
+            animate={{ scale: 15, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        ))}
     </button>
   );
 }

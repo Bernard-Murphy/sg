@@ -1,5 +1,11 @@
 import { toast } from "sonner";
 
+/**
+ *
+ * @param string - String to copy
+ * @returns void
+ */
+
 export const copyText = (string: string) => {
   let textarea = document.createElement("textarea");
   let result;
@@ -45,16 +51,12 @@ export const copyText = (string: string) => {
   toast.success("Copied to clipboard");
 };
 
-export const getFileSize = (size: string | number) => {
-  size = Number(size);
-  const units = ["Bytes", "KB", "MB", "GB"];
-  let scale = 0;
-  while (size > 900 && scale < 3) {
-    size /= 1024;
-    scale++;
-  }
-  return Math.round(size * 100) / 100 + " " + units[scale];
-};
+/**
+ *
+ * @param text Text to abbreviate
+ * @param length Number of characters to show before appending an ellipsis (defaults to 75)
+ * @returns Abbreviated text
+ */
 
 export const abbreviatedText = (text: string, length?: number) => {
   text = String(text);
@@ -64,33 +66,24 @@ export const abbreviatedText = (text: string, length?: number) => {
 };
 
 /**
- *
- * @param {JavaScript date} date
- * @returns a human readable date in the format "MM/DD/YYYY"
+ * @param {number | string} num - A number (i.e. 1000000)
+ * @returns String of num with commas appended (i.e. 1,000,000)
  */
-export const makeDateHR = (date: Date | string) => {
-  date = new Date(date);
-  let months = date.getMonth() + 1;
-  let days = date.getDate();
-  let years = date.getFullYear();
-  return months + "/" + days + "/" + years;
+export const numberWithCommas = (num: number | string) => {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 /**
  *
- * @param {JavaScript date} date
- * @returns a human readable time in the format "0:00AM"
+ * @param {number | string} n
+ * @returns
  */
-export const getTimeHR = (date: Date | string) => {
-  date = new Date(date);
-  let meridian = "AM";
-  let hours: string | number = date.getHours();
-  let minutes: string | number = date.getMinutes();
-  if (hours >= 12) meridian = "PM";
-  if (!hours) hours = 12;
-  if (hours > 12) {
-    hours -= 12;
+export const dolHR = (n: number | string) => {
+  n = Number(n);
+  n = n.toFixed(2);
+  n = numberWithCommas(n);
+  if (n === "-0.00") {
+    n = "0.00";
   }
-  if (String(minutes).length === 1) minutes = `0${minutes}`;
-  return hours + ":" + minutes + meridian;
+  return "$" + n;
 };

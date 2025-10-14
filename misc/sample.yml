@@ -8,6 +8,7 @@ provider:
   endpointType: EDGE
   timeout: 10
   region: us-east-1
+  stage: ${opt:stage, 'dev'}
   iam:
     role: arn:aws:iam::142530420275:role/sg-lambda-role
   deploymentBucket:
@@ -16,12 +17,14 @@ provider:
     binaryMediaTypes:
       - "*/*"
   environment:
-    BUCKET_HOST: ""
-    REGION: "us-east-1"
-    KEY_MODULUS_LENGTH: 1024
-    PASSWORD_SALT: 4
+    DYNAMO_FILES_TABLE: ""
+    REGION: ""
     AWS_SECRET_ACCESS_ID: ""
     AWS_SECRET_ACCESS_KEY: ""
+    CHROMIUM_TAR_SOURCE: ""
+    ASSET_URL: ""
+    PDF_FOLDER: ""
+    ASSET_BUCKET: ""
 
 plugins:
   - serverless-offline
@@ -41,17 +44,17 @@ custom:
 
 #config
 functions:
-  files_get_init:
-    handler: handler.files_get_init
-    timeout: 25
+  auth_get_init:
+    handler: handler.auth_get_init
+    timeout: 29
     events:
       - http:
-          path: files/init
+          path: auth/init
           method: get
           cors: true
   auth_post_login:
     handler: handler.auth_post_login
-    timeout: 25
+    timeout: 29
     events:
       - http:
           path: auth/login
@@ -59,15 +62,23 @@ functions:
           cors: true
   auth_post_register:
     handler: handler.auth_post_register
-    timeout: 25
+    timeout: 29
     events:
       - http:
           path: auth/register
           method: post
           cors: true
+  auth_get_logout:
+    handler: handler.auth_get_logout
+    timeout: 29
+    events:
+      - http:
+          path: auth/logout
+          method: get
+          cors: true
   files_post:
     handler: handler.files_post
-    timeout: 25
+    timeout: 29
     events:
       - http:
           path: files
@@ -75,17 +86,17 @@ functions:
           cors: true
   files_patch:
     handler: handler.files_patch
-    timeout: 25
+    timeout: 29
     events:
       - http:
-          path: files/{id}
+          path: files/{patchId}
           method: patch
           cors: true
   files_delete:
     handler: handler.files_delete
-    timeout: 25
+    timeout: 29
     events:
       - http:
-          path: files/{id}
+          path: files/{deleteId}
           method: delete
           cors: true

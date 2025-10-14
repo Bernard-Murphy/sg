@@ -6,10 +6,18 @@ import {
 import { transitions as t } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
+/**
+ * Animated count that I made
+ * Intuitive number display with scrolling digits
+ *
+ * If fraction, count will be displayed like: count / max, with increasing count increasing the numerator
+ * Else, count will be displayed as (max - count)
+ */
+
 export interface CountProps {
   count: number;
   max: number;
-  fraction?: boolean;
+  fraction?: boolean; // Count will be displayed like: count / max
 }
 
 export default function AnimatedCount({ count, fraction, max }: CountProps) {
