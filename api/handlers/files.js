@@ -28,6 +28,7 @@ const { normalizeEventBody } = require("../utils/methods");
  *
  */
 const files_post = async (event, context, cb) => {
+  console.log(event.body, "first");
   event.body = normalizeEventBody(event.body);
   const { category, values } = event.body;
 
@@ -88,7 +89,7 @@ const files_post = async (event, context, cb) => {
 };
 
 /**
- * PATCH /files/{patchId}
+ * PATCH /files/{fileId}
  *
  * body:
  * * category: "delinquency_notice" | "statement" | "receipt"
@@ -128,7 +129,7 @@ const files_patch = async (event, context, cb) => {
     const key = await generatePDF(html);
     const userId = uuid(); //temp
     const file = await putFile({
-      id: event.pathParameters.patchId,
+      id: event.pathParameters.fileId,
       userId,
       category: category,
       key,
@@ -162,13 +163,13 @@ const files_patch = async (event, context, cb) => {
 };
 
 /**
- * DELETE /files/{patchId}
+ * DELETE /files/{fileId}
  *
  * Deletes the file from S3
  * Deletes the file from Dynamo
  */
 const files_delete = async (event, context, cb) => {
-  const deleteId = event.pathParameters.deleteId;
+  const deleteId = event.pathParameters.fileId;
   try {
     const file = await getFile(deleteId);
     await deleteFile(deleteId, file.key.S);

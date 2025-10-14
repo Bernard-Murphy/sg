@@ -51,8 +51,9 @@ xl: > 1024px (desktop)
 - PDF_FOLDER: S3 folder containing the pdfs, i.e. "pdfs"
 - ASSET_BUCKET: S3 bucket containing all of the app files
 
-TO DO:
+#### Running locally
 
-- backend authentication
-- deployments
-- loom video
+- cd api
+- npm install
+- npm run dev
+- uses serverless-offline, will run on port 1338 by default

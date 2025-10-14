@@ -1,3 +1,5 @@
 node_modules
 .env
 serverless.yml
+.serverless
+dist
