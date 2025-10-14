@@ -26,6 +26,7 @@ provider:
     ASSET_URL: "https://0763e64cf54d76f14ead5413773fb2ef.s3.us-east-1.amazonaws.com"
     PDF_FOLDER: "pdfs"
     ASSET_BUCKET: "0763e64cf54d76f14ead5413773fb2ef"
+    SLS_STAGE: "${opt:stage, 'dev'}"
 
 plugins:
   - serverless-offline
