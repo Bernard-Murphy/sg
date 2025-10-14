@@ -25,20 +25,20 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Authenticate Serverless
-        working-directory: api
-        run: npx serverless config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} --config github.yml
-
       - name: Install Dependencies
         working-directory: api
         run: npm install
 
       - name: Deploy to Dev
         working-directory: api
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         if: github.ref == 'refs/heads/dev'
         run: npx serverless deploy --stage dev --config github.yml
 
       - name: Deploy to Production
         working-directory: api
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
         if: github.ref == 'refs/heads/master'
         run: npx serverless deploy --stage prod --config github.yml
