@@ -91,6 +91,7 @@ const getFilesByUserId = (userId) =>
 const deleteFile = (fileId, Key) =>
   new Promise(async (resolve, reject) => {
     try {
+      console.log(fileId, "d");
       await client.send(
         new DeleteItemCommand({
           TableName: filesTable,
@@ -135,15 +136,7 @@ const getFile = (fileId) =>
       );
       if (!result.Item) throw `Not found - ${fileId}`;
 
-      const Item = {
-        id: id.S,
-        userId: userId.S,
-        category: category.S,
-        key: key.S,
-        timestamp: timestamp.S,
-        formValues: formValues.S,
-      };
-      resolve(Item);
+      resolve(result.Item);
     } catch (err) {
       console.log(err, "getFile error", err);
       reject(err);
