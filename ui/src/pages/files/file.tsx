@@ -65,6 +65,13 @@ export default function FileComponent() {
   }, []);
 
   useEffect(() => {
+    if (fileSelected)
+      setFile({
+        ...fileSelected,
+      });
+  }, [fileSelected?.key]);
+
+  useEffect(() => {
     if (!fileSelected) setDeleteDialogShown(false);
   }, [fileSelected?.id]);
 
