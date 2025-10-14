@@ -5,7 +5,7 @@ const http = require("http");
 const app = express();
 const port = process.env.PORT || 6363;
 
-app.use(express.static(path.join(__dirname, "..", "ui", "build")));
+app.use(express.static(path.join(__dirname, "..", "ui", "dist")));
 
 const server = http.createServer(app);
 
