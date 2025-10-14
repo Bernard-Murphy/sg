@@ -1,0 +1,38 @@
+name: sg
+
+# on:
+#   pull_request:
+#     branches: stage
+#     types: push
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Deploy to Dev
+        working-directory: api
+        if: github.ref == 'refs/heads/dev'
+        run: npx serverless deploy --stage dev
+
+      - name: Deploy to Production
+        working-directory: api
+        if: github.ref == 'refs/heads/master'
+        run: npx serverless deploy --stage prod

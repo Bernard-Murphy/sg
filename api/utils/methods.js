@@ -14,13 +14,13 @@ const normalizeEventBody = (eventBody) => {
       };
 
     try {
-      eventBody = JSON.parse(eventBody);
-    } catch (err) {
       eventBody = Buffer.from(eventBody, "base64").toString("utf-8");
+    } catch (err) {
+      eventBody = JSON.parse(eventBody);
     }
 
     return {
-      ...eventBody,
+      ...JSON.parse(eventBody),
     };
   } catch (err) {
     console.log(err, "normalizeEventBody error");

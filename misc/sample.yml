@@ -16,15 +16,16 @@ provider:
   apiGateway:
     binaryMediaTypes:
       - "*/*"
+    # Keep on 1 API Gateway stage when custom domain name is available
+    # restApiId: q3om7s9s05
+    # restApiRootResourceId: vn1hkk3i2e
   environment:
-    DYNAMO_FILES_TABLE: ""
-    REGION: ""
-    AWS_SECRET_ACCESS_ID: ""
-    AWS_SECRET_ACCESS_KEY: ""
-    CHROMIUM_TAR_SOURCE: ""
-    ASSET_URL: ""
-    PDF_FOLDER: ""
-    ASSET_BUCKET: ""
+    DYNAMO_FILES_TABLE: "sg-files-${opt:stage, 'dev'}"
+    REGION: "us-east-1"
+    CHROMIUM_TAR_SOURCE: "https://0763e64cf54d76f14ead5413773fb2ef.s3.us-east-1.amazonaws.com/chrome.tar"
+    ASSET_URL: "https://0763e64cf54d76f14ead5413773fb2ef.s3.us-east-1.amazonaws.com"
+    PDF_FOLDER: "pdfs"
+    ASSET_BUCKET: "0763e64cf54d76f14ead5413773fb2ef"
 
 plugins:
   - serverless-offline
@@ -38,8 +39,8 @@ package:
 
 custom:
   serverless-offline:
-    lambdaPort: ${opt:lambdaPort}
-    httpPort: ${opt:httpPort}
+    lambdaPort: ${opt:lambdaPort, 1336}
+    httpPort: ${opt:httpPort, 1338}
     useInProcess: true
 
 #config
@@ -49,7 +50,7 @@ functions:
     timeout: 29
     events:
       - http:
-          path: auth/init
+          path: /auth/init
           method: get
           cors: true
   auth_post_login:
@@ -57,7 +58,7 @@ functions:
     timeout: 29
     events:
       - http:
-          path: auth/login
+          path: /auth/login
           method: post
           cors: true
   auth_post_register:
@@ -65,7 +66,7 @@ functions:
     timeout: 29
     events:
       - http:
-          path: auth/register
+          path: /auth/register
           method: post
           cors: true
   auth_get_logout:
@@ -73,7 +74,7 @@ functions:
     timeout: 29
     events:
       - http:
-          path: auth/logout
+          path: /auth/logout
           method: get
           cors: true
   files_post:
@@ -81,7 +82,7 @@ functions:
     timeout: 29
     events:
       - http:
-          path: files
+          path: /files
           method: post
           cors: true
   files_patch:
@@ -89,7 +90,7 @@ functions:
     timeout: 29
     events:
       - http:
-          path: files/{patchId}
+          path: /files/{fileId}
           method: patch
           cors: true
   files_delete:
@@ -97,6 +98,6 @@ functions:
     timeout: 29
     events:
       - http:
-          path: files/{deleteId}
+          path: /files/{fileId}
           method: delete
           cors: true
