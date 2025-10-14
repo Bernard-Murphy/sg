@@ -57,3 +57,8 @@ xl: > 1024px (desktop)
 - npm install
 - npm run dev
 - uses serverless-offline, will run on port 1338 by default
+
+## CI/CD
+
+- Uses Github actions, see .github/workflows
+- Lambda config located at github.yml. Specifies the handlers and the Dynamo tables.
