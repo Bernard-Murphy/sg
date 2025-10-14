@@ -30,9 +30,9 @@ jobs:
       - name: Deploy to Dev
         working-directory: api
         if: github.ref == 'refs/heads/dev'
-        run: npx serverless deploy --stage dev
+        run: npx serverless deploy --stage dev --config github.yml
 
       - name: Deploy to Production
         working-directory: api
         if: github.ref == 'refs/heads/master'
-        run: npx serverless deploy --stage prod
+        run: npx serverless deploy --stage prod --config github.yml

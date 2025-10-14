@@ -1,0 +1,103 @@
+service: sg-lambda-functions
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  endpointType: EDGE
+  timeout: 10
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  iam:
+    role: arn:aws:iam::142530420275:role/sg-lambda-role
+  deploymentBucket:
+    skipPolicySetup: true
+  apiGateway:
+    binaryMediaTypes:
+      - "*/*"
+    # Keep on 1 API Gateway stage when custom domain name is available
+    # restApiId: q3om7s9s05
+    # restApiRootResourceId: vn1hkk3i2e
+  environment:
+    DYNAMO_FILES_TABLE: "sg-files-${opt:stage, 'dev'}"
+    REGION: "us-east-1"
+    CHROMIUM_TAR_SOURCE: "https://0763e64cf54d76f14ead5413773fb2ef.s3.us-east-1.amazonaws.com/chrome.tar"
+    ASSET_URL: "https://0763e64cf54d76f14ead5413773fb2ef.s3.us-east-1.amazonaws.com"
+    PDF_FOLDER: "pdfs"
+    ASSET_BUCKET: "0763e64cf54d76f14ead5413773fb2ef"
+
+plugins:
+  - serverless-offline
+  - serverless-package-external
+  - serverless-prune-versions
+  - serverless-plugin-include-dependencies
+  - serverless-prune-plugin
+
+package:
+  excludeDevDependencies: false
+
+custom:
+  serverless-offline:
+    lambdaPort: ${opt:lambdaPort, 1336}
+    httpPort: ${opt:httpPort, 1338}
+    useInProcess: true
+
+#config
+functions:
+  auth_get_init:
+    handler: handler.auth_get_init
+    timeout: 29
+    events:
+      - http:
+          path: /auth/init
+          method: get
+          cors: true
+  auth_post_login:
+    handler: handler.auth_post_login
+    timeout: 29
+    events:
+      - http:
+          path: /auth/login
+          method: post
+          cors: true
+  auth_post_register:
+    handler: handler.auth_post_register
+    timeout: 29
+    events:
+      - http:
+          path: /auth/register
+          method: post
+          cors: true
+  auth_get_logout:
+    handler: handler.auth_get_logout
+    timeout: 29
+    events:
+      - http:
+          path: /auth/logout
+          method: get
+          cors: true
+  files_post:
+    handler: handler.files_post
+    timeout: 29
+    events:
+      - http:
+          path: /files
+          method: post
+          cors: true
+  files_patch:
+    handler: handler.files_patch
+    timeout: 29
+    events:
+      - http:
+          path: /files/{fileId}
+          method: patch
+          cors: true
+  files_delete:
+    handler: handler.files_delete
+    timeout: 29
+    events:
+      - http:
+          path: /files/{fileId}
+          method: delete
+          cors: true
